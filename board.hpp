@@ -7,6 +7,15 @@
 
 using namespace std;
 
+// Bitboard encoding
+// .  .  .  .  .  .  .  TOP
+// 5 12 19 26 33 40 47
+// 4 11 18 25 32 39 46
+// 3 10 17 24 31 38 45
+// 2  9 16 23 30 37 44
+// 1  8 15 22 29 36 43
+// 0  7 14 21 28 35 42  BOTTOM
+
 class Board {
 public:
     Board();
@@ -14,7 +23,7 @@ public:
     ~Board() = default;
     Board& operator=(const Board& other) = default;
 
-
+    size_t getTurn() const;
     bool isWon() const;
     vector<size_t> getSuccessors() const;
     ostream& print(ostream& os) const;
@@ -26,6 +35,6 @@ private:
     size_t turn_;
 };
 
-ostream& operator<<(const ostream& os, const Board& board);
+ostream& operator<<(ostream& os, const Board& board);
 
 #endif // BOARD_HPP
