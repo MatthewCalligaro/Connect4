@@ -1,11 +1,15 @@
-#ifndef BOARD_HPP
-#define BOARD_HPP
+// Copyright 2019 Matthew Calligaro
+
+#ifndef BOARD_HPP_
+#define BOARD_HPP_
 
 #include <cstdint>
 #include <vector>
 #include <ostream>
 
-using namespace std;
+using std::vector;
+using std::ostream;
+using std::endl;
 
 // Bitboard encoding
 // .  .  .  .  .  .  .  TOP
@@ -17,7 +21,7 @@ using namespace std;
 // 0  7 14 21 28 35 42  BOTTOM
 
 class Board {
-public:
+ public:
     Board();
     Board(const Board& other) = default;
     ~Board() = default;
@@ -25,16 +29,17 @@ public:
 
     size_t getTurn() const;
     bool isWon() const;
+    // TODO(MatthewCalligaro): Add isDraw()
     vector<size_t> getSuccessors() const;
     ostream& print(ostream& os) const;
 
     void handleMove(size_t move);
 
-private:
+ private:
     uint64_t masks_[2] = {0, 0};
     size_t turn_;
 };
 
 ostream& operator<<(ostream& os, const Board& board);
 
-#endif // BOARD_HPP
+#endif  // BOARD_HPP_

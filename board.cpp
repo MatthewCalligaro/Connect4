@@ -1,3 +1,5 @@
+// Copyright 2019 Matthew Calligaro
+
 #include "board.hpp"
 
 Board::Board() : turn_{0} {}
@@ -23,7 +25,7 @@ bool Board::isWon() const {
     if (y & (y >> 2 * 7)) {
         return true;
     }
-    
+
     // check / diagonal
     y = board & (board >> 8);
     if (y & (y >> 2 * 8)) {

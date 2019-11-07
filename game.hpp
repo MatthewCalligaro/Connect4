@@ -1,11 +1,13 @@
-#ifndef GAME_HPP
-#define GAME_HPP
+// Copyright 2019 Matthew Calligaro
 
-#include "board.hpp"
+#ifndef GAME_HPP_
+#define GAME_HPP_
+
 #include "agent.hpp"
+#include "board.hpp"
 
 class Game {
-public:
+ public:
     Game() = delete;
     Game(const Game& other) = default;
     Game(Agent* xAgent, Agent* oAgent);
@@ -13,9 +15,9 @@ public:
     Game& operator=(const Game& other) = default;
 
     size_t execute();
-private:
+ private:
     Board board_;
     Agent* agents_[2];
-}
+};
 
-#endif // GAME_HPP
+#endif  // GAME_HPP_

@@ -1,3 +1,5 @@
+// Copyright 2019 Matthew Calligaro
+
 #include "game.hpp"
 
 Game::Game(Agent* xAgent, Agent* oAgent) {
@@ -14,7 +16,7 @@ size_t Game::execute() {
     size_t moves = 0;
 
     // Allow each agent to play on their turn until the game is won or a draw
-    while(moves < 42 && !board_.isWon()) {
+    while (moves < 42 && !board_.isWon()) {
         board_.handleMove(agents_[board_.getTurn()]->getMove(board_));
         ++moves;
     }
