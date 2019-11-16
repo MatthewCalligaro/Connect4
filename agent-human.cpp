@@ -1,13 +1,14 @@
 // Copyright 2019 Matthew Calligaro
 
 #include <iostream>
+#include <string>
 #include "agent-human.hpp"
 
 size_t AgentHuman::getMove(Board board) {
     std::cout << board << std::endl;
     std::cout << "Enter the index of the column in which you would like to" <<
         "play (a number from 0 to 6): ";
-    
+
     size_t move;
     std::cin >> move;
 

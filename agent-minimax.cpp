@@ -1,6 +1,8 @@
 // Copyright 2019 Matthew Calligaro
 
 #include <algorithm>
+#include <string>
+#include <vector>
 #include "agent-minimax.hpp"
 
 size_t AgentMinimax::getMove(Board board) {
@@ -18,7 +20,7 @@ size_t AgentMinimax::getMove(Board board) {
         Board sucBoard = board;
         sucBoard.handleMove(move);
         float sucMinimax = minimax(sucBoard, depth - 1, alpha, beta);
-        
+
         // If this successor is the best so far, update values
         if (!turn && sucMinimax > bestSucMinimax) {
             bestMove = move;
@@ -43,13 +45,13 @@ std::string AgentMinimax::getAgentName() const {
     return "Minimax";
 }
 
-float AgentMinimax::minimax(Board board, size_t depth, float alpha, 
+float AgentMinimax::minimax(Board board, size_t depth, float alpha,
     float beta) {
     size_t turn = board.getTurn();
     // Return 1 if X won, -1 if O won, or O if it is a draw
     if (board.isWon()) {
         return static_cast<float>(turn << 1) - 1;
-    }    
+    }
     if (board.isDraw()) {
         return 0;
     }

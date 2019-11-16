@@ -3,12 +3,13 @@
 #ifndef AGENT_NULL_HPP_
 #define AGENT_NULL_HPP_
 
+#include <string>
 #include "agent.hpp"
 
 class AgentNull : public Agent {
  public:
-    virtual size_t getMove(Board board) override;
-    virtual std::string getAgentName() const override;
+    size_t getMove(Board board) override;
+    std::string getAgentName() const override;
 };
 
 #endif  // AGENT_NULL_HPP_
