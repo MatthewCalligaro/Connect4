@@ -4,10 +4,12 @@
 #define GAME_HPP_
 
 #include <memory>
+#include <ostream>
 #include "agent.hpp"
 #include "board.hpp"
 
 using std::shared_ptr;
+using std::ostream;
 
 class Game {
  public:
@@ -18,6 +20,8 @@ class Game {
     Game& operator=(const Game& other) = default;
 
     size_t execute();
+    ostream& printBoard(ostream& os) const;
+    
  private:
     Board board_;
     shared_ptr<Agent> agents_[2];

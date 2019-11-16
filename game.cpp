@@ -1,8 +1,11 @@
 // Copyright 2019 Matthew Calligaro
 
 #include <memory>
+#include <ostream>
 #include "game.hpp"
 
+using std::endl;
+using std::ostream;
 using std::shared_ptr;
 
 Game::Game(shared_ptr<Agent> xAgent, shared_ptr<Agent> oAgent) {
@@ -26,4 +29,9 @@ size_t Game::execute() {
         return 2;
     }
     return (moves + 1) % 2;
+}
+
+ostream& Game::printBoard(ostream& os) const {
+    os << board_;
+    return os;
 }
