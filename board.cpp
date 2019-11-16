@@ -42,9 +42,9 @@ bool Board::isWon() const {
 }
 
 bool Board::isDraw() const {
-    const uint64_t drawBoard = ((1 << 48) - 1) ^ ((1 << 6) | (1 << 13) |
-        (1 << 20) | (1 << 27) | (1 << 34) | (1 << 41));
-    return drawBoard == masks_[0] | masks_[1];
+    const uint64_t drawBoard = ((1L << 48) - 1) ^ ((1 << 6) | (1 << 13) |
+        (1 << 20) | (1 << 27) | (1L << 34) | (1L << 41));
+    return drawBoard == (masks_[0] | masks_[1]);
 }
 
 bool Board::isValidMove(size_t move) const {
