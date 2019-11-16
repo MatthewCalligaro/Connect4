@@ -1,15 +1,13 @@
 // Copyright 2019 Matthew Calligaro
 
+#include <memory>
 #include "game.hpp"
 
-Game::Game(Agent* xAgent, Agent* oAgent) {
+using std::shared_ptr;
+
+Game::Game(shared_ptr<Agent> xAgent, shared_ptr<Agent> oAgent) {
     agents_[0] = xAgent;
     agents_[1] = oAgent;
-}
-
-Game::~Game() {
-    delete agents_[0];
-    delete agents_[1];
 }
 
 // TODO(MatthewCalligaro): Protect against bad moves

@@ -3,21 +3,24 @@
 #ifndef GAME_HPP_
 #define GAME_HPP_
 
+#include <memory>
 #include "agent.hpp"
 #include "board.hpp"
+
+using std::shared_ptr;
 
 class Game {
  public:
     Game() = delete;
     Game(const Game& other) = default;
-    Game(Agent* xAgent, Agent* oAgent);
-    ~Game();
+    Game(shared_ptr<Agent> xAgent, shared_ptr<Agent> oAgent);
+    ~Game() = default;
     Game& operator=(const Game& other) = default;
 
     size_t execute();
  private:
     Board board_;
-    Agent* agents_[2];
+    shared_ptr<Agent> agents_[2];
 };
 
 #endif  // GAME_HPP_

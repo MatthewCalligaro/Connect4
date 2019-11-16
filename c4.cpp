@@ -1,6 +1,7 @@
 // Copyright 2019 Matthew Calligaro
 
 #include <iostream>
+#include <memory>
 #include "agent-null.hpp"
 #include "agent-human.hpp"
 #include "agent-minimax.hpp"
@@ -8,10 +9,12 @@
 
 using std::cout;
 using std::endl;
+using std::shared_ptr;
+using std::make_shared;
 
 int main() {
-    Agent* a1 = new AgentHuman();
-    Agent* a2 = new AgentMinimax();
+    shared_ptr<Agent> a1 = make_shared<AgentHuman>();
+    shared_ptr<Agent> a2 = make_shared<AgentMinimax>();
     Game game(a1, a2);
 
     cout << a1->getAgentName() << " vs. " << a2->getAgentName() << endl;
