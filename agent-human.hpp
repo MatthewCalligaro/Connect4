@@ -7,7 +7,8 @@
 
 class AgentHuman : public Agent {
  public:
-    virtual size_t getMove(Board board);
+    virtual size_t getMove(Board board) override;
+    virtual std::string getAgentName() const override;
 };
 
 #endif  // AGENT_HUMAN_HPP_

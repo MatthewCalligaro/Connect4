@@ -18,3 +18,7 @@ size_t AgentHuman::getMove(Board board) {
 
     return move;
 }
+
+std::string AgentHuman::getAgentName() const {
+    return "Human";
+}

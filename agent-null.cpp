@@ -5,3 +5,7 @@
 size_t AgentNull::getMove(Board board) {
     return board.getSuccessors()[0];
 }
+
+std::string AgentNull::getAgentName() const {
+    return "Null";
+}
