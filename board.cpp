@@ -89,7 +89,7 @@ ostream& Board::print(ostream& os) const {
     // Iterate through the board row by row left to right top to bottom
     size_t bit = 5;
     while (bit != 49) {
-        os << chars[((masks_[0] >> bit) & 1) + 2 * ((masks_[1] >> bit) & 1)] 
+        os << chars[((masks_[0] >> bit) & 1) + 2 * ((masks_[1] >> bit) & 1)]
             << " ";
         if (bit > 41) os << endl;
         bit = (bit + 7) % 50;

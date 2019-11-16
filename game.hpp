@@ -21,7 +21,7 @@ class Game {
 
     size_t execute();
     ostream& printBoard(ostream& os) const;
-    
+
  private:
     Board board_;
     shared_ptr<Agent> agents_[2];

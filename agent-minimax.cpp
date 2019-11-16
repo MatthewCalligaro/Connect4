@@ -9,14 +9,10 @@
 using std::array;
 using std::vector;
 
-#include <iostream>
-using std::cout;
-using std::endl;
-
 AgentMinimax::AgentMinimax() : AgentMinimax(10, 0.99, 0.01) {}
 
-AgentMinimax::AgentMinimax(size_t firstDepth, float discount, 
-    float threatWeight) : firstDepth_{firstDepth}, discount_{discount}, 
+AgentMinimax::AgentMinimax(size_t firstDepth, float discount,
+    float threatWeight) : firstDepth_{firstDepth}, discount_{discount},
     threatWeight_{threatWeight} {}
 
 size_t AgentMinimax::getMove(Board board) {
@@ -82,7 +78,7 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
         // Calculate the minimax of the successor state
         Board sucBoard = board;
         sucBoard.handleMove(move);
-        float sucMinimax = discount_ * 
+        float sucMinimax = discount_ *
             minimax(sucBoard, depth - 1, alpha, beta);
 
         // If this successor is the best so far, update values

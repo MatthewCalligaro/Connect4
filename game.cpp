@@ -25,9 +25,9 @@ size_t Game::execute() {
         if (!board_.isValidMove(move)) {
             size_t badMove = move;
             move = board_.getSuccessors()[0];
-            cerr << agents_[board_.getTurn()]->getAgentName() << " made an " << 
-                "invalid move (" << badMove << "). Using move " << move << 
-                " instead."; 
+            cerr << agents_[board_.getTurn()]->getAgentName() << " made an " <<
+                "invalid move (" << badMove << "). Using move " << move <<
+                " instead.";
         }
         board_.handleMove(move);
         ++moves;
