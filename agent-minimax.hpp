@@ -9,11 +9,12 @@
 class AgentMinimax : public Agent {
  public:
     AgentMinimax();
-    AgentMinimax(size_t firstDepth, float threatWeight);
+    AgentMinimax(size_t firstDepth, float discount, float threatWeight);
     size_t getMove(Board board) override;
     std::string getAgentName() const override;
  private:
     size_t firstDepth_;
+    float discount_;
     float threatWeight_;
 
     float minimax(Board board, size_t depth, float alpha, float beta);
