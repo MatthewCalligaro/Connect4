@@ -5,7 +5,7 @@
 
 #include "agent.hpp"
 
-class AgentNull : Agent {
+class AgentNull : public Agent {
  public:
     virtual size_t getMove(Board board);
 };
