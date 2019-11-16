@@ -12,6 +12,8 @@ Game::~Game() {
     delete agents_[1];
 }
 
+// TODO(MatthewCalligaro): Protect against bad moves
+// TODO(MatthewCalligaro): Add time limit
 size_t Game::execute() {
     size_t moves = 0;
 

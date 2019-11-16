@@ -11,6 +11,7 @@ size_t AgentHuman::getMove(Board board) {
     size_t move;
     std::cin >> move;
 
+    // TODO(MatthewCalligaro): Handle non-numerical inputs
     while (!board.isValidMove(move)) {
         std::cout << "That is not a valid move.  Please try again: ";
         std::cin >> move;
