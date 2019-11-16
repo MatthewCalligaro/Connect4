@@ -3,6 +3,7 @@
 #include <iostream>
 #include "agent-null.hpp"
 #include "agent-human.hpp"
+#include "agent-minimax.hpp"
 #include "game.hpp"
 
 using std::cout;
@@ -10,7 +11,7 @@ using std::endl;
 
 int main() {
     Agent* a1 = new AgentHuman();
-    Agent* a2 = new AgentNull();
+    Agent* a2 = new AgentMinimax();
     Game game(a1, a2);
 
     cout << a1->getAgentName() << " vs. " << a2->getAgentName() << endl;
