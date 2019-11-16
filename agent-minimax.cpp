@@ -1,13 +1,26 @@
 // Copyright 2019 Matthew Calligaro
 
+#include <array>
 #include <algorithm>
 #include <string>
 #include <vector>
 #include "agent-minimax.hpp"
 
+using std::array;
+using std::vector;
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+AgentMinimax::AgentMinimax() : AgentMinimax(10, 0.01) {}
+
+AgentMinimax::AgentMinimax(size_t firstDepth, float threatWeight) :
+    firstDepth_{firstDepth}, threatWeight_{threatWeight} {}
+
 size_t AgentMinimax::getMove(Board board) {
     size_t turn = board.getTurn();
-    size_t depth = FIRST_DEPTH;
+    size_t depth = firstDepth_;
     vector<size_t> moves = board.getSuccessors();
     size_t bestMove = 3;
     float bestSucMinimax = -256 + (turn * 512.0);
@@ -58,7 +71,7 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
 
     // If we reached max depth, use our heuristic to estimate the minimax
     if (depth == 0) {
-        return 0;
+        return heuristic(board);
     }
 
     // Find the best successor
@@ -86,4 +99,9 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
     }
 
     return bestSucMinimax;
+}
+
+float AgentMinimax::heuristic(const Board& board) const {
+    array<size_t, 2> threatCount = board.getThreatCount();
+    return threatCount[0] * threatWeight_ - threatCount[1] * threatWeight_;
 }

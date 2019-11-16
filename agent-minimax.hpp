@@ -8,11 +8,16 @@
 
 class AgentMinimax : public Agent {
  public:
+    AgentMinimax();
+    AgentMinimax(size_t firstDepth, float threatWeight);
     size_t getMove(Board board) override;
     std::string getAgentName() const override;
  private:
-    static const size_t FIRST_DEPTH = 6;
+    size_t firstDepth_;
+    float threatWeight_;
+
     float minimax(Board board, size_t depth, float alpha, float beta);
+    float heuristic(const Board& board) const;
 };
 
 #endif  // AGENT_MINIMAX_HPP_
