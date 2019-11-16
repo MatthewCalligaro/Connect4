@@ -30,6 +30,7 @@ class Board {
     size_t getTurn() const;
     bool isWon() const;
     // TODO(MatthewCalligaro): Add isDraw()
+    bool isValidMove(size_t move) const;
     vector<size_t> getSuccessors() const;
     ostream& print(ostream& os) const;
 

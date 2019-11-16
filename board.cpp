@@ -41,6 +41,13 @@ bool Board::isWon() const {
     return false;
 }
 
+bool Board::isValidMove(size_t move) const {
+    if (move > 6) {
+        return false;
+    }
+    return !(((masks_[0] | masks_[1]) >> (move * 7 + 5)) & 1);
+}
+
 vector<size_t> Board::getSuccessors() const {
     vector<size_t> sucs;
     uint64_t invBoard = ~(masks_[0] | masks_[1]);
