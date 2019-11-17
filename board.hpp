@@ -4,12 +4,13 @@
 #define BOARD_HPP_
 
 #include <cstdint>
+#include <array>
 #include <vector>
 #include <ostream>
 
 using std::vector;
+using std::array;
 using std::ostream;
-using std::endl;
 
 // Bitboard encoding
 // .  .  .  .  .  .  .  TOP
@@ -32,6 +33,7 @@ class Board {
     bool isDraw() const;
     bool isValidMove(size_t move) const;
     vector<size_t> getSuccessors() const;
+    array<size_t, 2> getThreatCount() const;
     ostream& print(ostream& os) const;
 
     void handleMove(size_t move);
@@ -39,6 +41,8 @@ class Board {
  private:
     uint64_t masks_[2] = {0, 0};
     size_t turn_;
+
+    static size_t isWon(uint64_t mask);
 };
 
 ostream& operator<<(ostream& os, const Board& board);

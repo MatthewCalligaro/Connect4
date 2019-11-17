@@ -1,6 +1,14 @@
 // Copyright 2019 Matthew Calligaro
 
+#include <array>
+#include <vector>
+#include <ostream>
 #include "board.hpp"
+
+using std::vector;
+using std::array;
+using std::ostream;
+using std::endl;
 
 Board::Board() : turn_{0} {}
 
@@ -11,34 +19,8 @@ size_t Board::getTurn() const {
 // Source: Fhourstones Benchmark by John Tromp
 // https://github.com/qu1j0t3/fhourstones
 bool Board::isWon() const {
-    // If player who most recently played won
-    uint64_t board = masks_[!turn_];
-
-    // check \ diagonal
-    uint64_t y = board & (board >> 6);
-    if (y & (y >> 2 * 6)) {
-        return true;
-    }
-
-    // check horizontal
-    y = board & (board >> 7);
-    if (y & (y >> 2 * 7)) {
-        return true;
-    }
-
-    // check / diagonal
-    y = board & (board >> 8);
-    if (y & (y >> 2 * 8)) {
-        return true;
-    }
-
-    // check vertical
-    y = board & (board >> 1);
-    if (y & (y >> 2)) {
-        return true;
-    }
-
-    return false;
+    // Check if player who most recently played won
+    return isWon(masks_[!turn_]);
 }
 
 bool Board::isDraw() const {
@@ -85,16 +67,37 @@ vector<size_t> Board::getSuccessors() const {
     return sucs;
 }
 
+array<size_t, 2> Board::getThreatCount() const {
+    array<size_t, 2> threatCount{ {0, 0} };
+    uint64_t board = masks_[0] | masks_[1];
+
+    // For each column, cheack each empty spaces from the top down for threats
+    for (int column = 0; column < 7; ++column) {
+        for (int bit = 5 + column * 7; bit >= column * 7; --bit) {
+            if ((board >> bit) & 1) {
+                break;
+            }
+            threatCount[0] += isWon(masks_[0] | (1L << bit));
+            threatCount[1] += isWon(masks_[1] | (1L << bit));
+        }
+    }
+    return threatCount;
+}
+
 ostream& Board::print(ostream& os) const {
     const char chars[3] = {'.', 'X', 'O'};
 
     // Iterate through the board row by row left to right top to bottom
     size_t bit = 5;
     while (bit != 49) {
-        os << chars[((masks_[0] >> bit) & 1) + 2 * ((masks_[1] >> bit) & 1)];
+        os << chars[((masks_[0] >> bit) & 1) + 2 * ((masks_[1] >> bit) & 1)]
+            << " ";
         if (bit > 41) os << endl;
         bit = (bit + 7) % 50;
     }
+
+    // Print column indices along the bottom
+    os << "0 1 2 3 4 5 6" << endl;
 
     return os;
 }
@@ -108,10 +111,38 @@ void Board::handleMove(size_t move) {
     }
 
     // Place a piece at bit in the correct mask and toggle turn_
-    masks_[turn_] |= (1 << bit);
+    masks_[turn_] |= (1L << bit);
     turn_ = !turn_;
 }
 
 ostream& operator<<(ostream& os, const Board& board) {
     return board.print(os);
+}
+
+size_t Board::isWon(uint64_t mask) {
+    // check \ diagonal
+    uint64_t y = mask & (mask >> 6);
+    if (y & (y >> 2 * 6)) {
+        return 1;
+    }
+
+    // check horizontal
+    y = mask & (mask >> 7);
+    if (y & (y >> 2 * 7)) {
+        return 1;
+    }
+
+    // check / diagonal
+    y = mask & (mask >> 8);
+    if (y & (y >> 2 * 8)) {
+        return 1;
+    }
+
+    // check vertical
+    y = mask & (mask >> 1);
+    if (y & (y >> 2)) {
+        return 1;
+    }
+
+    return 0;
 }
