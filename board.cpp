@@ -47,6 +47,7 @@ bool Board::isDraw() const {
     return drawBoard == (masks_[0] | masks_[1]);
 }
 
+
 bool Board::isValidMove(size_t move) const {
     if (move > 6) {
         return false;
