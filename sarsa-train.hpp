@@ -12,7 +12,7 @@ class LSARSATrain {
     static vector<size_t> extractFeatures(Board board);
     vector<double> sarsaTrain(Board board);
     std::tuple<size_t, double> getAction(Board board, vector<double> theta);
-    std::tuple<size_t, double> getEGreedyAction(Board board, vector<double> theta, double epsilon);
+    std::tuple<size_t, double> getEGreedyAction(Board board, vector<double> theta, double epsilon, bool q);
     double reward(Board board);
 };
 

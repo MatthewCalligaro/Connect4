@@ -56,7 +56,7 @@ vector<double> LSARSATrain::sarsaTrain(Board board){
     }
     for (size_t episode; episode < NUM_EPISODES; ++episode){
         cout << "Training episode " << episode << endl;
-        std::tuple<size_t, double> actionTup = getEGreedyAction(boardCopy, theta, EPSILON);
+        std::tuple<size_t, double> actionTup = getEGreedyAction(boardCopy, theta, EPSILON, true);
         size_t action = std::get<0>(actionTup);
         double q_prime = std::get<1>(actionTup);
         while (!boardCopy.isDraw() && !boardCopy.isWon())
@@ -71,7 +71,7 @@ vector<double> LSARSATrain::sarsaTrain(Board board){
                     theta[i] += delta;
                 };
             }
-            actionTup = getEGreedyAction(board, theta, EPSILON);
+            actionTup = getEGreedyAction(board, theta, EPSILON, true);
             action = std::get<0>(actionTup);
             q_prime = std::get<1>(actionTup);
         }
@@ -95,20 +95,27 @@ std::tuple<size_t, double> LSARSATrain::getAction(Board board, vector<double> th
     return std::make_tuple(max_move, max_val);
 }
 
-std::tuple<size_t, double> LSARSATrain::getEGreedyAction(Board board, vector<double> theta, double epsilon){
+std::tuple<size_t, double> LSARSATrain::getEGreedyAction(Board board, vector<double> theta, double epsilon, bool q){
     vector<size_t> successors = board.getSuccessors();
     double lower_bound = 0;
     double upper_bound = 1;
     std::uniform_real_distribution<double> unif(lower_bound,upper_bound);
     std::default_random_engine re;
     double a_random_double = unif(re);
+    std::tuple<size_t, double> actionTup = getAction(board, theta);
+    double maxq= std::get<1>(actionTup);
     if (a_random_double < epsilon){
          std::uniform_int_distribution<int> distribution(0, successors.size()-1); 
          size_t pos = distribution(re);
          Board sucBoard = board;
          sucBoard.handleMove(pos);
-         double q = getQValue(sucBoard, theta);
-         return std::make_tuple(pos, q);
+         double qval = 0;
+         if(q){
+            qval = maxq;
+         } else {
+            qval = getQValue(sucBoard, theta);
+         }
+         return std::make_tuple(pos, qval);
     } else {
         return getAction(board, theta);
     }
