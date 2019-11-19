@@ -1,3 +1,4 @@
+
 CXX = clang++
 CXXFLAGS = -O3 -std=c++1z -Wall -Wextra -pedantic
 TARGET = c4
@@ -19,7 +20,11 @@ agent-null.o: agent-null.cpp agent-null.hpp agent.hpp
 agent-human.o: agent-human.cpp agent-human.hpp agent.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
+<<<<<<< HEAD
 sarsa_train.o: sarsa-train.cpp sarsa-train.hpp board.hpp
+=======
+sarsa-train.o: sarsa-train.cpp sarsa-train.hpp board.hpp
+>>>>>>> 61230bebcc26e8805d957f640d6daaacdcdf30d7
 	$(CXX) $< -c $(CXXFLAGS)
 
 agent-minimax.o: agent-minimax.cpp agent-minimax.hpp agent.hpp
