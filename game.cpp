@@ -8,13 +8,19 @@
 #include <thread>
 #include "game.hpp"
 
+using namespace std::chrono;
+using std::async;
 using std::cerr;
 using std::endl;
 using std::future;
 using std::ostream;
 using std::promise;
 using std::shared_ptr;
-using std::thread;
+
+void threadHelper(shared_ptr<Agent> agent, Board board, 
+    shared_ptr<size_t> move) {
+    agent->getMove(board, *move);
+}
 
 Game::Game(shared_ptr<Agent> xAgent, shared_ptr<Agent> oAgent, 
     size_t turnTime) : turnTime_{turnTime} {
@@ -22,7 +28,6 @@ Game::Game(shared_ptr<Agent> xAgent, shared_ptr<Agent> oAgent,
     agents_[1] = oAgent;
 }
 
-// TODO(MatthewCalligaro): Add time limit
 size_t Game::execute() {
     size_t moves = 0;
 
@@ -30,11 +35,18 @@ size_t Game::execute() {
     while (moves < 42 && !board_.isWon()) {
         size_t move = getMove(board_.getTurn());
         if (!board_.isValidMove(move)) {
-            size_t badMove = move;
+            // Explain why the move was not valid
+            if (move == NO_MOVE) {
+                cerr << agents_[board_.getTurn()]->getAgentName() << 
+                    " did not make a move in the time limit.  ";
+            } else {
+                cerr << agents_[board_.getTurn()]->getAgentName() << 
+                " made an invalid move (" << move << ").  ";
+            }
+
+            // Use the default move instead
             move = board_.getSuccessors()[0];
-            cerr << agents_[board_.getTurn()]->getAgentName() << " made an " <<
-                "invalid move (" << badMove << "). Using move " << move <<
-                " instead.";
+            cerr << "Using move " << move << " instead.";
         }
         board_.handleMove(move);
         ++moves;
@@ -53,22 +65,15 @@ ostream& Game::printBoard(ostream& os) const {
 }
 
 size_t Game::getMove(size_t agent) {
-    promise<void> timeout;
-    size_t move = 7;
+    shared_ptr<size_t> move(new size_t(NO_MOVE));
+    system_clock::time_point endTime = system_clock::now() + 
+        milliseconds(turnTime_);
 
-    // Create thread 
-    thread getMoveThread(getMoveThreadFunction, move, agent, 
-        timeout.get_future());
+    // Run the agents getMove function (via threadHelper) until at most endTime
+    future<void> threadFuture = 
+        async(threadHelper, agents_[agent], board_, move);
+    threadFuture.wait_until(endTime);
 
-    // Wait for turn time
-    std::this_thread::sleep_for(std::chrono::milliseconds(turnTime_));
-    timeout.set_value();
-    thread.join();
-
-    return move;
-}
-
-void Game::getMoveThreadFunction(size_t& move, size_t agent, 
-    future<void>& timeout) {
-    
+    // Return whatever value the agent placed in move by this time
+    return *move;
 }

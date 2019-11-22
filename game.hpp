@@ -26,12 +26,12 @@ class Game {
     ostream& printBoard(ostream& os) const;
 
  private:
+    static const size_t NO_MOVE = 15942;
     Board board_;
     shared_ptr<Agent> agents_[2];
     size_t turnTime_;
 
     size_t getMove(size_t agent);
-    size_t getMoveThreaded(size_t agent, future<void> timeout);
 };
 
 #endif  // GAME_HPP_
