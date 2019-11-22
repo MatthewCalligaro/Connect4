@@ -3,14 +3,14 @@
 #ifndef BOARD_HPP_
 #define BOARD_HPP_
 
-#include <cstdint>
 #include <array>
-#include <vector>
+#include <cstdint>
 #include <ostream>
+#include <vector>
 
-using std::vector;
 using std::array;
 using std::ostream;
+using std::vector;
 
 // Bitboard encoding
 // .  .  .  .  .  .  .  TOP
@@ -23,28 +23,28 @@ using std::ostream;
 
 class Board {
  public:
-    Board();
-    Board(const Board& other) = default;
-    ~Board() = default;
-    Board& operator=(const Board& other) = default;
+  Board();
+  Board(const Board &other) = default;
+  ~Board() = default;
+  Board &operator=(const Board &other) = default;
 
-    size_t getTurn() const;
-    bool isWon() const;
-    bool isDraw() const;
-    bool isValidMove(size_t move) const;
-    vector<size_t> getSuccessors() const;
-    array<size_t, 2> getThreatCount() const;
-    ostream& print(ostream& os) const;
+  size_t getTurn() const;
+  bool isWon() const;
+  bool isDraw() const;
+  bool isValidMove(size_t move) const;
+  vector<size_t> getSuccessors() const;
+  array<size_t, 2> getThreatCount() const;
+  ostream &print(ostream &os) const;
 
-    void handleMove(size_t move);
+  void handleMove(size_t move);
 
  private:
-    uint64_t masks_[2] = {0, 0};
-    size_t turn_;
+  uint64_t masks_[2] = {0, 0};
+  size_t turn_;
 
-    static size_t isWon(uint64_t mask);
+  static size_t isWon(uint64_t mask);
 };
 
-ostream& operator<<(ostream& os, const Board& board);
+ostream &operator<<(ostream &os, const Board &board);
 
 #endif  // BOARD_HPP_

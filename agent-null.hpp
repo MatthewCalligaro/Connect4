@@ -8,8 +8,8 @@
 
 class AgentNull : public Agent {
  public:
-    void getMove(const Board& board, size_t& move) override;
-    std::string getAgentName() const override;
+  void getMove(const Board &board, size_t &move) override;
+  std::string getAgentName() const override;
 };
 
 #endif  // AGENT_NULL_HPP_

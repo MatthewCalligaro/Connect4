@@ -8,9 +8,9 @@
 
 class Agent {
  public:
-    virtual ~Agent() = default;
-    virtual void getMove(const Board& board, size_t& move) = 0;
-    virtual std::string getAgentName() const = 0;
+  virtual ~Agent() = default;
+  virtual void getMove(const Board &board, size_t &move) = 0;
+  virtual std::string getAgentName() const = 0;
 };
 
 #endif  // AGENT_HPP_
