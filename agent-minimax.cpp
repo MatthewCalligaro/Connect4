@@ -9,13 +9,13 @@
 using std::array;
 using std::vector;
 
-AgentMinimax::AgentMinimax() : AgentMinimax(10, 0.99, 0.01) {}
+AgentMinimax::AgentMinimax() : AgentMinimax(12, 0.99, 0.01) {}
 
 AgentMinimax::AgentMinimax(size_t firstDepth, float discount,
     float threatWeight) : firstDepth_{firstDepth}, discount_{discount},
     threatWeight_{threatWeight} {}
 
-size_t AgentMinimax::getMove(Board board) {
+void AgentMinimax::getMove(const Board& board, size_t& move) {
     size_t turn = board.getTurn();
     size_t depth = firstDepth_;
     vector<size_t> moves = board.getSuccessors();
@@ -48,7 +48,7 @@ size_t AgentMinimax::getMove(Board board) {
         }
     }
 
-    return bestMove;
+    move = bestMove;
 }
 
 std::string AgentMinimax::getAgentName() const {

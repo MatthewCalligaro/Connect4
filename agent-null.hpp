@@ -8,7 +8,7 @@
 
 class AgentNull : public Agent {
  public:
-    size_t getMove(Board board) override;
+    void getMove(const Board& board, size_t& move) override;
     std::string getAgentName() const override;
 };
 

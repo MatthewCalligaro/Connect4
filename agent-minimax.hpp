@@ -10,7 +10,7 @@ class AgentMinimax : public Agent {
  public:
     AgentMinimax();
     AgentMinimax(size_t firstDepth, float discount, float threatWeight);
-    size_t getMove(Board board) override;
+    void getMove(const Board& board, size_t& move) override;
     std::string getAgentName() const override;
  private:
     size_t firstDepth_;

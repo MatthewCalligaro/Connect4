@@ -9,7 +9,7 @@
 class Agent {
  public:
     virtual ~Agent() = default;
-    virtual size_t getMove(Board board) = 0;
+    virtual void getMove(const Board& board, size_t& move) = 0;
     virtual std::string getAgentName() const = 0;
 };
 
