@@ -2,11 +2,12 @@
 CXX = clang++
 CXXFLAGS = -O3 -std=c++1z -Wall -Wextra -pedantic
 TARGET = c4
+LIBRARIES = -lpthread
 
 all: $(TARGET)
 
 $(TARGET): c4.o game.o agent-null.o agent-human.o agent-minimax.o sarsa-train.o board.o
-	$(CXX) -o $@ $^ $(CXXFLAGS)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBRARIES)
 
 c4.o: c4.cpp agent-null.hpp game.hpp
 	$(CXX) $< -c $(CXXFLAGS)
