@@ -13,7 +13,7 @@ using std::shared_ptr;
 using std::make_shared;
 
 int main() {
-    shared_ptr<Agent> a1 = make_shared<AgentHuman>();
+    shared_ptr<Agent> a1 = make_shared<AgentNull>();
     shared_ptr<Agent> a2 = make_shared<AgentMinimax>();
     Game game(a1, a2);
 

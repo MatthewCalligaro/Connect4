@@ -16,8 +16,6 @@ size_t Board::getTurn() const {
     return turn_;
 }
 
-// Source: Fhourstones Benchmark by John Tromp
-// https://github.com/qu1j0t3/fhourstones
 bool Board::isWon() const {
     // Check if player who most recently played won
     return isWon(masks_[!turn_]);
@@ -118,6 +116,8 @@ ostream& operator<<(ostream& os, const Board& board) {
     return board.print(os);
 }
 
+// Source: Fhourstones Benchmark by John Tromp
+// https://github.com/qu1j0t3/fhourstones
 size_t Board::isWon(uint64_t mask) {
     // check \ diagonal
     uint64_t y = mask & (mask >> 6);
