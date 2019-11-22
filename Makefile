@@ -31,8 +31,11 @@ board.o: board.cpp board.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
 lint: 
-	cpplint *.cpp
-	cpplint *.hpp
+	-cpplint *.cpp
+	-cpplint *.hpp
+
+auto-format:
+	clang-format --style=file -i *.*pp
 
 clean:
 	rm -rf *.o $(TARGET)
