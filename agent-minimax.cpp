@@ -1,23 +1,23 @@
 // Copyright 2019 Matthew Calligaro
 
+#define AB_PRUNING 1
+#define MEMOIZE 1
+#define ITERATIVE_DEEPENING 0
+
 #include "agent-minimax.hpp"
 #include <algorithm>
 #include <array>
 #include <string>
 #include <vector>
 
-using std::array;
-using std::vector;
+AgentMinimax::AgentMinimax() : AgentMinimax(12, 0.01) {}
 
-AgentMinimax::AgentMinimax() : AgentMinimax(12, 0.99, 0.01) {}
+AgentMinimax::AgentMinimax(size_t firstDepth, float threatWeight)
+    : firstDepth_{firstDepth}, threatWeight_{threatWeight} {}
 
-AgentMinimax::AgentMinimax(size_t firstDepth, float discount,
-                           float threatWeight)
-    : firstDepth_{firstDepth},
-      discount_{discount},
-      threatWeight_{threatWeight} {}
-
-void AgentMinimax::getMove(const Board &board, size_t &move) {
+void AgentMinimax::getMove(
+    const Board &board, size_t &move,
+    const std::chrono::system_clock::time_point &endTime) {
   size_t turn = board.getTurn();
   size_t depth = firstDepth_;
   vector<size_t> moves = board.getSuccessors();
@@ -44,8 +44,14 @@ void AgentMinimax::getMove(const Board &board, size_t &move) {
       beta = std::min(beta, bestSucMinimax);
     }
 
+#if AB_PRUNING
     // If alpha > beta, do not explore any further
     if (alpha >= beta) {
+      break;
+    }
+#endif
+
+    if (std::chrono::system_clock::now() >= endTime) {
       break;
     }
   }
@@ -57,6 +63,13 @@ std::string AgentMinimax::getAgentName() const { return "Minimax"; }
 
 float AgentMinimax::minimax(Board board, size_t depth, float alpha,
                             float beta) {
+#if MEMOIZE
+  auto boardValue = memo.find(board);
+  if (boardValue != memo.end()) {
+    return boardValue->second;
+  }
+#endif
+
   size_t turn = board.getTurn();
   // Return 1 if X won, -1 if O won, or O if it is a draw
   if (board.isWon()) {
@@ -78,7 +91,7 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
     // Calculate the minimax of the successor state
     Board sucBoard = board;
     sucBoard.handleMove(move);
-    float sucMinimax = discount_ * minimax(sucBoard, depth - 1, alpha, beta);
+    float sucMinimax = DISCOUNT * minimax(sucBoard, depth - 1, alpha, beta);
 
     // If this successor is the best so far, update values
     if (!turn && sucMinimax > bestSucMinimax) {
@@ -89,11 +102,19 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
       beta = std::min(beta, bestSucMinimax);
     }
 
+#if AB_PRUNING
     // If alpha > beta, do not explore any further
     if (alpha >= beta) {
       break;
     }
+#endif
   }
+
+#if MEMOIZE
+  if (bestSucMinimax > MAX_DISCOUNT) {
+    memo[board] = bestSucMinimax;
+  }
+#endif
 
   return bestSucMinimax;
 }
