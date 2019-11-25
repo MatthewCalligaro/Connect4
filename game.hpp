@@ -4,31 +4,30 @@
 #define GAME_HPP_
 
 #include <future>
+#include <list>
 #include <memory>
 #include <ostream>
 #include "agent.hpp"
 #include "board.hpp"
 
-using std::future;
-using std::ostream;
-using std::shared_ptr;
-
 class Game {
  public:
   Game() = delete;
   Game(const Game &other) = default;
-  Game(shared_ptr<Agent> xAgent, shared_ptr<Agent> oAgent,
+  Game(std::shared_ptr<Agent> xAgent, std::shared_ptr<Agent> oAgent,
        size_t turnTime = 2000);
   ~Game() = default;
   Game &operator=(const Game &other) = default;
 
   size_t execute(bool verbose = false);
-  ostream &printBoard(ostream &os) const;
+  size_t execute(std::shared_ptr<std::list<double>[]> moveTimes,
+                 bool verbose = false);
+  std::ostream &printBoard(ostream &os) const;
 
  private:
   static const size_t NO_MOVE = 15942;
   Board board_;
-  shared_ptr<Agent> agents_[2];
+  std::shared_ptr<Agent> agents_[2];
   size_t turnTime_;
 
   size_t getMove(size_t agent);

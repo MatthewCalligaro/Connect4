@@ -4,22 +4,31 @@
 #include <chrono>
 #include <future>
 #include <iostream>
+#include <list>
 #include <memory>
 #include <ostream>
 #include <thread>
 
-void threadHelper(shared_ptr<Agent> agent, Board board, shared_ptr<size_t> move,
+void threadHelper(std::shared_ptr<Agent> agent, Board board,
+                  std::shared_ptr<size_t> move,
                   const std::chrono::system_clock::time_point &endTime) {
   agent->getMove(board, *move, endTime);
 }
 
-Game::Game(shared_ptr<Agent> xAgent, shared_ptr<Agent> oAgent, size_t turnTime)
+Game::Game(std::shared_ptr<Agent> xAgent, std::shared_ptr<Agent> oAgent,
+           size_t turnTime)
     : turnTime_{turnTime} {
   agents_[0] = xAgent;
   agents_[1] = oAgent;
 }
 
 size_t Game::execute(bool verbose) {
+  std::shared_ptr<std::list<double>[]> moveTimes(new std::list<double>[2]);
+  return execute(moveTimes, verbose);
+}
+
+size_t Game::execute(std::shared_ptr<std::list<double>[]> moveTimes,
+                     bool verbose) {
   size_t moves = 0;
   double totalTimes[2] = {0, 0};
 
@@ -36,6 +45,7 @@ size_t Game::execute(bool verbose) {
         1000000000.0;
 
     totalTimes[board_.getTurn()] += elapsed;
+    moveTimes[board_.getTurn()].push_back(elapsed);
 
     if (!board_.isValidMove(move)) {
       // Explain why the move was not valid
@@ -84,14 +94,14 @@ ostream &Game::printBoard(ostream &os) const {
 }
 
 size_t Game::getMove(size_t agent) {
-  shared_ptr<size_t> move(new size_t(NO_MOVE));
+  std::shared_ptr<size_t> move(new size_t(NO_MOVE));
   std::chrono::system_clock::time_point endTime =
       std::chrono::system_clock::now() + std::chrono::milliseconds(turnTime_);
 
   // Run the agent's getMove function (via threadHelper) until at most endTime
   // and grab the value currently stored in move
-  future<void> threadFuture = async(std::launch::async, threadHelper,
-                                    agents_[agent], board_, move, endTime);
+  std::future<void> threadFuture = async(std::launch::async, threadHelper,
+                                         agents_[agent], board_, move, endTime);
   threadFuture.wait_until(endTime);
   size_t output = *move;
 
