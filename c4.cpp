@@ -5,6 +5,7 @@
 #include "agent-human.hpp"
 #include "agent-minimax.hpp"
 #include "agent-null.hpp"
+#include "agent-sarsa.hpp"
 #include "game.hpp"
 
 using std::cout;
@@ -13,7 +14,10 @@ using std::make_shared;
 using std::shared_ptr;
 
 int main() {
-  shared_ptr<Agent> a1 = make_shared<AgentNull>();
+  LSARSATrain LSARSA_0 = LSARSATrain(0, true);
+  vector<double> theta_0 = LSARSA_0.sarsaTrain();
+  AgentSARSA SarsaAgent = AgentSARSA(theta_0);
+  shared_ptr<Agent> a1 = make_shared<AgentSARSA>(theta_0);
   shared_ptr<Agent> a2 = make_shared<AgentMinimax>();
   Game game(a1, a2);
 

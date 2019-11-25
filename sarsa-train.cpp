@@ -9,9 +9,24 @@
 using std::cout;
 using std::endl;
 
+LSARSATrain::LSARSATrain(size_t turn, bool isQ): trainingFor{turn}, isQ{isQ} {};
+
 vector<size_t> LSARSATrain::extractFeatures(Board board) {
-  // TODO: Implement Board -> Vector
+  array<size_t, 2> threatCount = board.getThreatCount();
+  size_t score = 0;
+  if (board.getTurn()){
+    score = threatCount[0]*3 + threatCount[1];
+  } else {
+    score = threatCount[1]*3 + threatCount[0];
+  }
   vector<size_t> output = vector<size_t>(VECTOR_SIZE);
+  for (size_t i = 0; i<VECTOR_SIZE; ++i){
+    if (i == score){
+      output[i] = 1;
+    } else {
+      output[i] = 0;
+    }
+  }
   return output;
 }
 
@@ -19,7 +34,7 @@ double LSARSATrain::reward(Board board) {
   if (board.isDraw()) {
     return 0;
   } else if (board.isWon()) {
-    if (board.getTurn() == 0) {
+    if (board.getTurn() == trainingFor) {
       return -1;
     } else {
       return +1;
@@ -36,6 +51,11 @@ double LSARSATrain::getQValue(Board board, vector<double> theta) {
     q += activeFeatures[i] * theta[i];
   }
   return q;
+}
+
+vector<double> LSARSATrain::sarsaTrain(){
+  Board board = Board();
+  return sarsaTrain(board);
 }
 
 vector<double> LSARSATrain::sarsaTrain(Board board) {
@@ -62,13 +82,15 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
     while (!boardCopy.isDraw() && !boardCopy.isWon()) {
       double q = getQValue(boardCopy, theta);
       boardCopy.handleMove(action);
-      double r = reward(boardCopy);
-      double delta = r + q_prime - q;
-      vector<size_t> activeFeatures = extractFeatures(boardCopy);
-      for (size_t i = 0; i < VECTOR_SIZE; ++i) {
-        if (activeFeatures[i] > 0) {
-          theta[i] += delta;
-        };
+      if (boardCopy.getTurn() != trainingFor){
+        double r = reward(boardCopy);
+        double delta = r + q_prime - q;
+        vector<size_t> activeFeatures = extractFeatures(boardCopy);
+        for (size_t i = 0; i < VECTOR_SIZE; ++i) {
+          if (activeFeatures[i] > 0) {
+            theta[i] += delta;
+          };
+        }
       }
       actionTup = getEGreedyAction(board, theta, EPSILON, true);
       action = std::get<0>(actionTup);
