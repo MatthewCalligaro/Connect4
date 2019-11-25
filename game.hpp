@@ -22,7 +22,7 @@ class Game {
   ~Game() = default;
   Game &operator=(const Game &other) = default;
 
-  size_t execute();
+  size_t execute(bool verbose = false);
   ostream &printBoard(ostream &os) const;
 
  private:

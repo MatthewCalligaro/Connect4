@@ -8,19 +8,9 @@
 #include <ostream>
 #include <thread>
 
-using std::async;
-using std::cerr;
-using std::chrono::milliseconds;
-using std::chrono::system_clock;
-using std::endl;
-using std::future;
-using std::ostream;
-using std::promise;
-using std::shared_ptr;
-
-void threadHelper(shared_ptr<Agent> agent, Board board,
-                  shared_ptr<size_t> move) {
-  agent->getMove(board, *move);
+void threadHelper(shared_ptr<Agent> agent, Board board, shared_ptr<size_t> move,
+                  const std::chrono::system_clock::time_point &endTime) {
+  agent->getMove(board, *move, endTime);
 }
 
 Game::Game(shared_ptr<Agent> xAgent, shared_ptr<Agent> oAgent, size_t turnTime)
@@ -29,28 +19,56 @@ Game::Game(shared_ptr<Agent> xAgent, shared_ptr<Agent> oAgent, size_t turnTime)
   agents_[1] = oAgent;
 }
 
-size_t Game::execute() {
+size_t Game::execute(bool verbose) {
   size_t moves = 0;
+  double totalTimes[2] = {0, 0};
 
   // Allow each agent to play on their turn until the game is won or a draw
   while (moves < 42 && !board_.isWon()) {
+    std::chrono::high_resolution_clock::time_point start =
+        std::chrono::high_resolution_clock::now();
     size_t move = getMove(board_.getTurn());
+    std::chrono::high_resolution_clock::time_point end =
+        std::chrono::high_resolution_clock::now();
+    double elapsed =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+            .count() /
+        1000000000.0;
+
+    totalTimes[board_.getTurn()] += elapsed;
+
     if (!board_.isValidMove(move)) {
       // Explain why the move was not valid
       if (move == NO_MOVE) {
-        cerr << agents_[board_.getTurn()]->getAgentName()
-             << " did not make a move in the time limit.  ";
+        std::cerr << agents_[board_.getTurn()]->getAgentName()
+                  << " did not make a move in the time limit.  ";
       } else {
-        cerr << agents_[board_.getTurn()]->getAgentName()
-             << " made an invalid move (" << move << ").  ";
+        std::cerr << agents_[board_.getTurn()]->getAgentName()
+                  << " made an invalid move (" << move << ").  ";
       }
 
       // Use the default move instead
       move = board_.getSuccessors()[0];
-      cerr << "Using move " << move << " instead.";
+      std::cerr << "Using move " << move << " instead." << std::endl;
     }
+
+    if (verbose) {
+      std::cout << agents_[board_.getTurn()]->getAgentName() << " played "
+                << move << " after " << elapsed << " seconds." << std::endl;
+    }
+
     board_.handleMove(move);
     ++moves;
+  }
+
+  if (verbose) {
+    std::cout << std::endl;
+    std::cout << agents_[0]->getAgentName()
+              << " average time: " << totalTimes[0] / (moves + 1 / 2)
+              << std::endl;
+    std::cout << agents_[1]->getAgentName()
+              << " average time: " << totalTimes[1] / (moves + 1 / 2)
+              << std::endl;
   }
 
   // Return winner, or 2 if a draw
@@ -67,13 +85,17 @@ ostream &Game::printBoard(ostream &os) const {
 
 size_t Game::getMove(size_t agent) {
   shared_ptr<size_t> move(new size_t(NO_MOVE));
-  system_clock::time_point endTime =
-      system_clock::now() + milliseconds(turnTime_);
+  std::chrono::system_clock::time_point endTime =
+      std::chrono::system_clock::now() + std::chrono::milliseconds(turnTime_);
 
-  // Run the agents getMove function (via threadHelper) until at most endTime
-  future<void> threadFuture = async(threadHelper, agents_[agent], board_, move);
+  // Run the agent's getMove function (via threadHelper) until at most endTime
+  // and grab the value currently stored in move
+  future<void> threadFuture = async(std::launch::async, threadHelper,
+                                    agents_[agent], board_, move, endTime);
   threadFuture.wait_until(endTime);
+  size_t output = *move;
 
-  // Return whatever value the agent placed in move by this time
-  return *move;
+  // For thread safety, wait until the agent finishes deciding its move
+  // before returning, but return the value grabbed at endTime
+  return output;
 }
