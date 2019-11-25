@@ -12,6 +12,10 @@ using std::vector;
 
 Board::Board() : turn_{0} {}
 
+bool Board::operator==(const Board &rhs) const {
+  return masks_[0] == rhs.masks_[0] && masks_[1] == rhs.masks_[1];
+}
+
 size_t Board::getTurn() const { return turn_; }
 
 bool Board::isWon() const {
@@ -140,4 +144,9 @@ size_t Board::isWon(uint64_t mask) {
   }
 
   return 0;
+}
+
+size_t BoardHasher::operator()(const Board &b) const {
+  // Shift mask_[1] left by 16 bits so the top board bit becomes the MSB
+  return b.masks_[0] ^ (b.masks_[1] << 16);
 }

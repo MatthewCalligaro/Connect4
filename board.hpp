@@ -28,6 +28,8 @@ class Board {
   ~Board() = default;
   Board &operator=(const Board &other) = default;
 
+  bool operator==(const Board &rhs) const;
+
   size_t getTurn() const;
   bool isWon() const;
   bool isDraw() const;
@@ -43,8 +45,14 @@ class Board {
   size_t turn_;
 
   static size_t isWon(uint64_t mask);
+
+  friend struct BoardHasher;
 };
 
 ostream &operator<<(ostream &os, const Board &board);
+
+struct BoardHasher {
+  size_t operator()(const Board &b) const;
+};
 
 #endif  // BOARD_HPP_
