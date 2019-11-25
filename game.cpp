@@ -17,23 +17,24 @@ void threadHelper(std::shared_ptr<Agent> agent, Board board,
 
 Game::Game(std::shared_ptr<Agent> xAgent, std::shared_ptr<Agent> oAgent,
            size_t turnTime)
-    : turnTime_{turnTime} {
+    : turnTime_{turnTime}, move_{0} {
   agents_[0] = xAgent;
   agents_[1] = oAgent;
 }
 
 size_t Game::execute(bool verbose) {
-  std::shared_ptr<std::list<double>[]> moveTimes(new std::list<double>[2]);
-  return execute(moveTimes, verbose);
+  std::array<double, 42> xMoveTimes;
+  std::array<double, 42> oMoveTimes;
+  return execute(xMoveTimes, oMoveTimes, verbose);
 }
 
-size_t Game::execute(std::shared_ptr<std::list<double>[]> moveTimes,
-                     bool verbose) {
-  size_t moves = 0;
+size_t Game::execute(std::array<double, 42> &xMoveTimes,
+                     std::array<double, 42> &oMoveTimes, bool verbose) {
   double totalTimes[2] = {0, 0};
 
   // Allow each agent to play on their turn until the game is won or a draw
-  while (moves < 42 && !board_.isWon()) {
+  while (move_ < 42 && !board_.isWon()) {
+    // Allow the agent to determine its move and measure the elapsed time
     std::chrono::high_resolution_clock::time_point start =
         std::chrono::high_resolution_clock::now();
     size_t move = getMove(board_.getTurn());
@@ -44,9 +45,15 @@ size_t Game::execute(std::shared_ptr<std::list<double>[]> moveTimes,
             .count() /
         1000000000.0;
 
+    // Record the elapsed time
     totalTimes[board_.getTurn()] += elapsed;
-    moveTimes[board_.getTurn()].push_back(elapsed);
+    if (board_.getTurn() == 1) {
+      oMoveTimes[move_ / 2] = elapsed;
+    } else {
+      xMoveTimes[move_ / 2] = elapsed;
+    }
 
+    // Handle if board move was invalid
     if (!board_.isValidMove(move)) {
       // Explain why the move was not valid
       if (move == NO_MOVE) {
@@ -63,29 +70,30 @@ size_t Game::execute(std::shared_ptr<std::list<double>[]> moveTimes,
     }
 
     if (verbose) {
-      std::cout << agents_[board_.getTurn()]->getAgentName() << " played "
-                << move << " after " << elapsed << " seconds." << std::endl;
+      std::cout << agents_[board_.getTurn()]->getAgentName() << " ("
+                << (board_.getTurn() ? "O" : "X") << " player) played " << move
+                << " after " << elapsed << " seconds." << std::endl;
     }
 
     board_.handleMove(move);
-    ++moves;
+    ++move_;
   }
 
   if (verbose) {
     std::cout << std::endl;
     std::cout << agents_[0]->getAgentName()
-              << " average time: " << totalTimes[0] / (moves + 1 / 2)
+              << "(X player) average time: " << totalTimes[0] / (move_ / 2)
               << std::endl;
     std::cout << agents_[1]->getAgentName()
-              << " average time: " << totalTimes[1] / (moves + 1 / 2)
+              << "(O player) average time: " << totalTimes[1] / (move_ / 2)
               << std::endl;
   }
 
   // Return winner, or 2 if a draw
-  if (moves == 42) {
+  if (move_ == 42) {
     return 2;
   }
-  return (moves + 1) % 2;
+  return (move_ + 1) % 2;
 }
 
 ostream &Game::printBoard(ostream &os) const {

@@ -20,8 +20,8 @@ class Game {
   Game &operator=(const Game &other) = default;
 
   size_t execute(bool verbose = false);
-  size_t execute(std::shared_ptr<std::list<double>[]> moveTimes,
-                 bool verbose = false);
+  size_t execute(std::array<double, 42> &xMoveTimes,
+                 std::array<double, 42> &oMoveTimes, bool verbose = false);
   std::ostream &printBoard(ostream &os) const;
 
  private:
@@ -29,6 +29,7 @@ class Game {
   Board board_;
   std::shared_ptr<Agent> agents_[2];
   size_t turnTime_;
+  size_t move_;
 
   size_t getMove(size_t agent);
 };
