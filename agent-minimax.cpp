@@ -40,7 +40,7 @@ void AgentMinimax::getMove(
       // Calculate the minimax of the successor state
       Board sucBoard = board;
       sucBoard.handleMove(move);
-      float sucMinimax = minimax(sucBoard, depth - 1, alpha, beta);
+      float sucMinimax = DISCOUNT * minimax(sucBoard, depth - 1, alpha, beta);
 
       // If this successor is the best so far, update values
       if (!turn && sucMinimax > bestSucMinimax) {

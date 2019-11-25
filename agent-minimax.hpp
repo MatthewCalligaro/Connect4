@@ -15,7 +15,7 @@ class AgentMinimax : public Agent {
                const std::chrono::system_clock::time_point &endTime) override;
   std::string getAgentName() const override;
 
- private:
+ protected:
   static const float constexpr DISCOUNT = 0.999;
   static const float constexpr MAX_DISCOUNT = 0.95;  // less than DISCOUNT^42
 

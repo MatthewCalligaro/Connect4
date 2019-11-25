@@ -4,13 +4,14 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "agent-benchmark.hpp"
 #include "agent-human.hpp"
 #include "agent-minimax.hpp"
 #include "agent-null.hpp"
 #include "game.hpp"
 
 void singleGame() {
-  std::shared_ptr<Agent> ax = std::make_shared<AgentNull>();
+  std::shared_ptr<Agent> ax = std::make_shared<AgentBenchmark>(4, 0, 0);
   std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(12, 0.01);
   Game game(ax, ao, 2000);
 
@@ -54,7 +55,7 @@ void trials() {
 
   // Execute games
   for (size_t i = 0; i < NUM_TRIALS; ++i) {
-    ax = std::make_shared<AgentMinimax>(4, 0);
+    ax = std::make_shared<AgentBenchmark>(4, 0, 0);
     ao = std::make_shared<AgentMinimax>(DEPTH, 0.01);
 
     Game game(ax, ao, TIME_LIMIT);
