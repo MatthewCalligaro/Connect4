@@ -2,11 +2,12 @@
 
 #define AB_PRUNING 1
 #define MEMOIZE 1
-#define ITERATIVE_DEEPENING 0
+#define ITERATIVE_DEEPENING 1
 
 #include "agent-minimax.hpp"
 #include <algorithm>
 #include <array>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -19,44 +20,57 @@ void AgentMinimax::getMove(
     const Board &board, size_t &move,
     const std::chrono::system_clock::time_point &endTime) {
   size_t turn = board.getTurn();
-  size_t depth = firstDepth_;
   vector<size_t> moves = board.getSuccessors();
-  size_t bestMove = 3;
-  float bestSucMinimax = -256 + (turn * 512.0);
-  float alpha = -256;
-  float beta = 256;
+  float bestSucMinimax = 0;
 
-  // Find the best move
-  for (size_t move : moves) {
-    // Calculate the minimax of the successor state
-    Board sucBoard = board;
-    sucBoard.handleMove(move);
-    float sucMinimax = minimax(sucBoard, depth - 1, alpha, beta);
-
-    // If this successor is the best so far, update values
-    if (!turn && sucMinimax > bestSucMinimax) {
-      bestMove = move;
-      bestSucMinimax = sucMinimax;
-      alpha = std::max(alpha, bestSucMinimax);
-    } else if (turn && sucMinimax < bestSucMinimax) {
-      bestMove = move;
-      bestSucMinimax = sucMinimax;
-      beta = std::min(beta, bestSucMinimax);
-    }
-
-#if AB_PRUNING
-    // If alpha > beta, do not explore any further
-    if (alpha >= beta) {
-      break;
-    }
+#if ITERATIVE_DEEPENING
+  for (size_t depth = firstDepth_; std::abs(bestSucMinimax) < MAX_DISCOUNT;
+       ++depth) {
+#else
+  for (size_t depth = firstDepth_; depth <= firstDepth_; ++depth) {
 #endif
 
-    if (std::chrono::system_clock::now() >= endTime) {
-      break;
-    }
-  }
+    size_t bestMove = 3;
+    float alpha = -256;
+    float beta = 256;
+    bestSucMinimax = -256 + (turn * 512.0);
 
-  move = bestMove;
+    // Find the best move
+    for (size_t move : moves) {
+      // Calculate the minimax of the successor state
+      Board sucBoard = board;
+      sucBoard.handleMove(move);
+      float sucMinimax = minimax(sucBoard, depth - 1, alpha, beta);
+
+      // If this successor is the best so far, update values
+      if (!turn && sucMinimax > bestSucMinimax) {
+        bestMove = move;
+        bestSucMinimax = sucMinimax;
+        alpha = std::max(alpha, bestSucMinimax);
+      } else if (turn && sucMinimax < bestSucMinimax) {
+        bestMove = move;
+        bestSucMinimax = sucMinimax;
+        beta = std::min(beta, bestSucMinimax);
+      }
+
+#if AB_PRUNING
+      // If alpha > beta, do not explore any further
+      if (alpha >= beta) {
+        break;
+      }
+#endif
+
+      // If we have surpassed the endTime given by the caller, yield to caller
+      if (std::chrono::system_clock::now() >= endTime) {
+        return;
+      }
+    }
+
+    move = bestMove;
+#if ITERATIVE_DEEPENING
+    std::cout << "Reached depth of " << depth << std::endl;
+#endif
+  }
 }
 
 std::string AgentMinimax::getAgentName() const { return "Minimax"; }

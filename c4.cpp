@@ -10,7 +10,7 @@
 #include "game.hpp"
 
 void singleGame() {
-  std::shared_ptr<Agent> ax = std::make_shared<AgentMinimax>(4, 0);
+  std::shared_ptr<Agent> ax = std::make_shared<AgentNull>();
   std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(12, 0.01);
   Game game(ax, ao, 2000);
 
@@ -98,6 +98,6 @@ void trials() {
 }
 
 int main() {
-  // singleGame();
-  trials();
+  singleGame();
+  // trials();
 }
