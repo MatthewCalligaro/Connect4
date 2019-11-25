@@ -6,7 +6,7 @@ LIBRARIES = -lpthread
 
 all: $(TARGET)
 
-$(TARGET): c4.o game.o agent-null.o agent-human.o agent-minimax.o sarsa-train.o board.o
+$(TARGET): c4.o game.o agent-null.o agent-human.o agent-minimax.o board.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBRARIES)
 
 c4.o: c4.cpp agent-null.hpp game.hpp
