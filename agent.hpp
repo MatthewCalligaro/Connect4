@@ -3,13 +3,16 @@
 #ifndef AGENT_HPP_
 #define AGENT_HPP_
 
+#include <chrono>
 #include <string>
 #include "board.hpp"
 
 class Agent {
  public:
   virtual ~Agent() = default;
-  virtual void getMove(const Board &board, size_t &move) = 0;
+  virtual void getMove(
+      const Board &board, size_t &move,
+      const std::chrono::system_clock::time_point &endTime) = 0;
   virtual std::string getAgentName() const = 0;
 };
 

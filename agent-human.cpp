@@ -4,7 +4,8 @@
 #include <iostream>
 #include <string>
 
-void AgentHuman::getMove(const Board &board, size_t &move) {
+void AgentHuman::getMove(const Board &board, size_t &move,
+                         const std::chrono::system_clock::time_point &endTime) {
   std::cout << board << std::endl;
   std::cout << "Enter the index of the column in which you would like to "
             << "play (a number from 0 to 6): ";
