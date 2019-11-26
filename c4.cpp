@@ -29,10 +29,10 @@ int main() {
   cout << a1->getAgentName() << " vs. " << a2->getAgentName() << endl;
   size_t winner = game.execute();
 
-  // cout << "----------------------------------------------------------------"
-  //      << endl
-  //      << "Final Board:" << endl;
-  // game.printBoard(cout);
+  cout << "----------------------------------------------------------------"
+       << endl
+       << "Final Board:" << endl;
+  game.printBoard(cout);
   
   switch (winner) {
     case 0:
@@ -58,10 +58,10 @@ int main() {
   cout << a2->getAgentName() << " vs. " << a1->getAgentName() << endl;
   size_t winner = game.execute();
 
-  // cout << "----------------------------------------------------------------"
-  //      << endl
-  //      << "Final Board:" << endl;
-  // game.printBoard(cout);
+  cout << "----------------------------------------------------------------"
+       << endl
+       << "Final Board:" << endl;
+  game.printBoard(cout);
   
   switch (winner) {
     case 0:

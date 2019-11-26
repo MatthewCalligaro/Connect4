@@ -31,10 +31,24 @@ vector<size_t> LSARSATrain::extractFeatures(Board board) {
     }
   }
   
-  vector<char> Board = board.getBoardVector();
+  vector<char> boardVector = board.getBoardVector();
+  for (size_t i = 0; i < 7; ++i){
+     
+  }
 
   return output;
 }
+
+size_t LSARSATrain::getSubstringCount(std::string mainStr, std::string subStr){
+   size_t occurrences = 0;
+   std::string::size_type pos = 0;
+   while ((pos = mainStr.find(subStr, pos )) != std::string::npos) {
+          ++ occurrences;
+          ++pos;
+   }
+   return occurrences;
+}
+
 
 double LSARSATrain::reward(Board board) {
   if (board.isDraw()) {
@@ -67,7 +81,8 @@ vector<double> LSARSATrain::sarsaTrain(){
 vector<double> LSARSATrain::sarsaTrain(Board board) {
   vector<double> theta = vector<double>(VECTOR_SIZE);
   const float EPSILON = 0.1;
-  const float ALPHA = 0.9;
+  const float ALPHA = 0.3;
+  const float GAMMA = 0.9;
   Board boardCopy = board;
 // 
   srand((unsigned)time(NULL));
@@ -77,15 +92,15 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
   std::default_random_engine re;
   re.seed((unsigned)time(NULL));
   for (size_t i = 0; i < VECTOR_SIZE; ++i) {
-    double a_random_double = unif(re);
+    // double a_random_double = unif(re);
     // theta[i] = a_random_double;
-    theta[i] = 0.5;
+    theta[i] = 0.1;
   }
-  std::ostringstream oss2;
-  std::copy(theta.begin(), theta.end()-1,
-        std::ostream_iterator<float>(oss2, ","));
-  oss2 << theta.back();
-  std::cout << oss2.str() << std::endl <<std::endl;
+  // std::ostringstream oss2;
+  // std::copy(theta.begin(), theta.end()-1,
+  //       std::ostream_iterator<float>(oss2, ","));
+  // oss2 << theta.back();
+  // std::cout << oss2.str() << std::endl <<std::endl;
 
   for (size_t episode = 0; episode < NUM_EPISODES; ++episode) {
     // if (episode % 1000000 == 0){
@@ -100,11 +115,11 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
       boardCopy.handleMove(action);
       if (boardCopy.getTurn() != trainingFor){
         double r = reward(boardCopy);
-        double delta = r + ALPHA * (q_prime - q);
+        double delta = r + GAMMA * (q_prime) - q;
         vector<size_t> activeFeatures = extractFeatures(boardCopy);
         for (size_t i = 0; i < VECTOR_SIZE; ++i) {
           if (activeFeatures[i] > 0) {
-            theta[i] += delta;
+            theta[i] += ALPHA*delta;
           };
         }
       }
@@ -113,11 +128,11 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
       q_prime = std::get<1>(actionTup);
     }
   }
-  std::ostringstream oss;
-  std::copy(theta.begin(), theta.end()-1,
-        std::ostream_iterator<float>(oss, ","));
-  oss << theta.back();
-  std::cout << oss.str() << std::endl;
+  // std::ostringstream oss;
+  // std::copy(theta.begin(), theta.end()-1,
+  //       std::ostream_iterator<float>(oss, ","));
+  // oss << theta.back();
+  // std::cout << oss.str() << std::endl;
   return theta;
 }
 
