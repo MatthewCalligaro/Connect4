@@ -5,11 +5,13 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <sstream>
+#include <iterator>
 
 using std::cout;
 using std::endl;
 
-LSARSATrain::LSARSATrain(size_t turn, bool isQ): trainingFor{turn}, isQ{isQ} {};
+LSARSATrain::LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES):  NUM_EPISODES{NUM_EPISODES}, trainingFor{turn}, isQ{isQ} {};
 
 vector<size_t> LSARSATrain::extractFeatures(Board board) {
   array<size_t, 2> threatCount = board.getThreatCount();
@@ -19,14 +21,18 @@ vector<size_t> LSARSATrain::extractFeatures(Board board) {
   } else {
     score = threatCount[1]*3 + threatCount[0];
   }
+
   vector<size_t> output = vector<size_t>(VECTOR_SIZE);
-  for (size_t i = 0; i<VECTOR_SIZE; ++i){
+  for (size_t i = 0; i<9; ++i){
     if (i == score){
       output[i] = 1;
     } else {
       output[i] = 0;
     }
   }
+  
+  vector<char> Board = board.getBoardVector();
+
   return output;
 }
 
@@ -37,7 +43,7 @@ double LSARSATrain::reward(Board board) {
     if (board.getTurn() == trainingFor) {
       return -1;
     } else {
-      return +1;
+      return 1;
     }
   } else {
     return -0.02;
@@ -63,18 +69,28 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
   const float EPSILON = 0.1;
   const float ALPHA = 0.9;
   Board boardCopy = board;
-
+// 
   srand((unsigned)time(NULL));
   double lower_bound = 0;
   double upper_bound = 1;
   std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
   std::default_random_engine re;
+  re.seed((unsigned)time(NULL));
   for (size_t i = 0; i < VECTOR_SIZE; ++i) {
     double a_random_double = unif(re);
-    theta[i] = a_random_double;
+    // theta[i] = a_random_double;
+    theta[i] = 0.5;
   }
-  for (size_t episode; episode < NUM_EPISODES; ++episode) {
-    cout << "Training episode " << episode << endl;
+  std::ostringstream oss2;
+  std::copy(theta.begin(), theta.end()-1,
+        std::ostream_iterator<float>(oss2, ","));
+  oss2 << theta.back();
+  std::cout << oss2.str() << std::endl <<std::endl;
+
+  for (size_t episode = 0; episode < NUM_EPISODES; ++episode) {
+    // if (episode % 1000000 == 0){
+    //   cout << "Training episode " << episode << endl;
+    // }
     std::tuple<size_t, double> actionTup =
         getEGreedyAction(boardCopy, theta, EPSILON, true);
     size_t action = std::get<0>(actionTup);
@@ -84,7 +100,7 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
       boardCopy.handleMove(action);
       if (boardCopy.getTurn() != trainingFor){
         double r = reward(boardCopy);
-        double delta = r + q_prime - q;
+        double delta = r + ALPHA * (q_prime - q);
         vector<size_t> activeFeatures = extractFeatures(boardCopy);
         for (size_t i = 0; i < VECTOR_SIZE; ++i) {
           if (activeFeatures[i] > 0) {
@@ -97,6 +113,11 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
       q_prime = std::get<1>(actionTup);
     }
   }
+  std::ostringstream oss;
+  std::copy(theta.begin(), theta.end()-1,
+        std::ostream_iterator<float>(oss, ","));
+  oss << theta.back();
+  std::cout << oss.str() << std::endl;
   return theta;
 }
 
@@ -126,6 +147,7 @@ std::tuple<size_t, double> LSARSATrain::getEGreedyAction(Board board,
   double upper_bound = 1;
   std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
   std::default_random_engine re;
+  re.seed((unsigned)time(NULL));
   double a_random_double = unif(re);
   std::tuple<size_t, double> actionTup = getAction(board, theta);
   double maxq = std::get<1>(actionTup);

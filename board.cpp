@@ -97,6 +97,20 @@ ostream &Board::print(ostream &os) const {
   return os;
 }
 
+vector<char> Board::getBoardVector()  {
+  const char chars[3] = {'.', 'X', 'O'};
+
+  vector<char> outputBoard = vector<char>();
+  // Iterate through the board row by row left to right top to bottom
+  size_t bit = 5;
+  while (bit != 49) {
+    outputBoard.push_back(chars[((masks_[0] >> bit) & 1) + 2 * ((masks_[1] >> bit) & 1)]);
+    bit = (bit + 7) % 50;
+  }
+
+  return outputBoard;
+}
+
 void Board::handleMove(size_t move) {
   // Find the lowest open bit in the column chosen by move
   uint64_t board = masks_[0] | masks_[1];

@@ -27,7 +27,7 @@ class Board {
   Board(const Board &other) = default;
   ~Board() = default;
   Board &operator=(const Board &other) = default;
-
+  vector<char> getBoardVector();
   size_t getTurn() const;
   bool isWon() const;
   bool isDraw() const;
