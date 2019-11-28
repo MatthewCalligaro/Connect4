@@ -8,10 +8,6 @@
 #include <ostream>
 #include <vector>
 
-using std::array;
-using std::ostream;
-using std::vector;
-
 // Bitboard encoding
 // .  .  .  .  .  .  .  TOP
 // 5 12 19 26 33 40 47
@@ -25,6 +21,7 @@ class Board {
  public:
   Board();
   Board(const Board &other) = default;
+  Board(uint64_t xMask, uint64_t oMask);
   ~Board() = default;
   Board &operator=(const Board &other) = default;
 
@@ -34,14 +31,14 @@ class Board {
   bool isWon() const;
   bool isDraw() const;
   bool isValidMove(size_t move) const;
-  vector<size_t> getSuccessors() const;
-  array<size_t, 2> getThreatCount() const;
-  ostream &print(ostream &os) const;
+  std::vector<size_t> getSuccessors() const;
+  std::array<size_t, 2> getThreatCount() const;
+  std::ostream &print(std::ostream &os) const;
 
   void handleMove(size_t move);
 
  private:
-  uint64_t masks_[2] = {0, 0};
+  uint64_t masks_[2];
   size_t turn_;
 
   static size_t isWon(uint64_t mask);
@@ -49,7 +46,7 @@ class Board {
   friend struct BoardHasher;
 };
 
-ostream &operator<<(ostream &os, const Board &board);
+std::ostream &operator<<(std::ostream &os, const Board &board);
 
 struct BoardHasher {
   size_t operator()(const Board &b) const;

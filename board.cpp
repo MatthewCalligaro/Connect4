@@ -5,12 +5,24 @@
 #include <ostream>
 #include <vector>
 
-using std::array;
-using std::endl;
-using std::ostream;
-using std::vector;
+Board::Board() : masks_{0, 0}, turn_{0} {}
 
-Board::Board() : turn_{0} {}
+Board::Board(uint64_t xMask, uint64_t oMask) : masks_{xMask, oMask} {
+  // Count x and o pieces to determine turn
+  size_t xPieces = 0;
+  for (size_t i = 0; i < 47; ++i) {
+    xPieces += xMask & 1;
+    xMask >>= 1;
+  }
+
+  size_t oPieces = 0;
+  for (size_t i = 0; i < 47; ++i) {
+    oPieces += xMask & 1;
+    oMask >>= 1;
+  }
+
+  turn_ = xPieces > oPieces;
+}
 
 bool Board::operator==(const Board &rhs) const {
   return masks_[0] == rhs.masks_[0] && masks_[1] == rhs.masks_[1];
@@ -37,8 +49,8 @@ bool Board::isValidMove(size_t move) const {
   return !(((masks_[0] | masks_[1]) >> (move * 7 + 5)) & 1);
 }
 
-vector<size_t> Board::getSuccessors() const {
-  vector<size_t> sucs;
+std::vector<size_t> Board::getSuccessors() const {
+  std::vector<size_t> sucs;
   uint64_t invBoard = ~(masks_[0] | masks_[1]);
 
   // We can play in any column in which the top bit is open
@@ -67,8 +79,8 @@ vector<size_t> Board::getSuccessors() const {
   return sucs;
 }
 
-array<size_t, 2> Board::getThreatCount() const {
-  array<size_t, 2> threatCount{{0, 0}};
+std::array<size_t, 2> Board::getThreatCount() const {
+  std::array<size_t, 2> threatCount{{0, 0}};
   uint64_t board = masks_[0] | masks_[1];
 
   // For each column, cheack each empty spaces from the top down for threats
@@ -84,19 +96,19 @@ array<size_t, 2> Board::getThreatCount() const {
   return threatCount;
 }
 
-ostream &Board::print(ostream &os) const {
+std::ostream &Board::print(std::ostream &os) const {
   const char chars[3] = {'.', 'X', 'O'};
 
   // Iterate through the board row by row left to right top to bottom
   size_t bit = 5;
   while (bit != 49) {
     os << chars[((masks_[0] >> bit) & 1) + 2 * ((masks_[1] >> bit) & 1)] << " ";
-    if (bit > 41) os << endl;
+    if (bit > 41) os << std::endl;
     bit = (bit + 7) % 50;
   }
 
   // Print column indices along the bottom
-  os << "0 1 2 3 4 5 6" << endl;
+  os << "0 1 2 3 4 5 6" << std::endl;
 
   return os;
 }
@@ -114,7 +126,9 @@ void Board::handleMove(size_t move) {
   turn_ = !turn_;
 }
 
-ostream &operator<<(ostream &os, const Board &board) { return board.print(os); }
+std::ostream &operator<<(std::ostream &os, const Board &board) {
+  return board.print(os);
+}
 
 // Source: Fhourstones Benchmark by John Tromp
 // https://github.com/qu1j0t3/fhourstones
