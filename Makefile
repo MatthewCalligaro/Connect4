@@ -7,7 +7,7 @@ LIBRARIES = -lpthread
 all: $(TARGET)
 
 $(TARGET): c4.o game.o agent-null.o agent-human.o agent-minimax.o \
-	agent-benchmark.o board.o
+	agent-benchmark.o board.o precomputed-values.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBRARIES)
 
 agent-null.o: agent-null.cpp agent-null.hpp agent.hpp
@@ -16,7 +16,8 @@ agent-null.o: agent-null.cpp agent-null.hpp agent.hpp
 agent-human.o: agent-human.cpp agent-human.hpp agent.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
-agent-minimax.o: agent-minimax.cpp agent-minimax.hpp agent.hpp
+agent-minimax.o: agent-minimax.cpp agent-minimax.hpp agent.hpp \
+	precomputed-values.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
 agent-benchmark.o: agent-benchmark.cpp agent-benchmark.hpp agent-minimax.hpp
@@ -29,6 +30,9 @@ board.o: board.cpp board.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
 game.o: game.cpp game.hpp agent.hpp board.hpp
+	$(CXX) $< -c $(CXXFLAGS)
+
+precomputed-values.o: precomputed-values.cpp precomputed-values.hpp board.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
 sarsa_train.o: sarsa-train.cpp sarsa-train.hpp board.hpp
