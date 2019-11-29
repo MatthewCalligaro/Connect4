@@ -2,7 +2,8 @@
 
 #define AB_PRUNING 1
 #define MEMOIZE 1
-#define ITERATIVE_DEEPENING 1
+#define ITERATIVE_DEEPENING 0
+#define PRECOMPUTED 0
 
 #include "agent-minimax.hpp"
 #include <algorithm>
@@ -11,16 +12,25 @@
 #include <string>
 #include <vector>
 
+#if PRECOMPUTED
+#include "precomputed-values.hpp"
+#endif
+
 AgentMinimax::AgentMinimax() : AgentMinimax(12, 0.01) {}
 
 AgentMinimax::AgentMinimax(size_t firstDepth, float threatWeight)
-    : firstDepth_{firstDepth}, threatWeight_{threatWeight} {}
+    : firstDepth_{firstDepth}, threatWeight_{threatWeight} {
+#if PRECOMPUTED
+  memo_ = precomp;
+#endif
+  std::cout << memo_.size() << std::endl;
+}
 
 void AgentMinimax::getMove(
     const Board &board, size_t &move,
     const std::chrono::system_clock::time_point &endTime) {
   size_t turn = board.getTurn();
-  vector<size_t> moves = board.getSuccessors();
+  std::vector<size_t> moves = board.getSuccessors();
   float bestSucMinimax = 0;
 
 #if ITERATIVE_DEEPENING
@@ -78,8 +88,10 @@ std::string AgentMinimax::getAgentName() const { return "Minimax"; }
 float AgentMinimax::minimax(Board board, size_t depth, float alpha,
                             float beta) {
 #if MEMOIZE
-  auto boardValue = memo.find(board);
-  if (boardValue != memo.end()) {
+  // Check if the minimax value has already been calculated
+  auto boardValue = memo_.find(board);
+  if (boardValue != memo_.end()) {
+    // std::cout << "memo lookup" << std::endl;
     return boardValue->second;
   }
 #endif
@@ -99,7 +111,7 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
   }
 
   // Find the best successor
-  vector<size_t> moves = board.getSuccessors();
+  std::vector<size_t> moves = board.getSuccessors();
   float bestSucMinimax = -256 + (turn * 512.0);
   for (size_t move : moves) {
     // Calculate the minimax of the successor state
@@ -125,8 +137,8 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
   }
 
 #if MEMOIZE
-  if (bestSucMinimax > MAX_DISCOUNT) {
-    memo[board] = bestSucMinimax;
+  if (std::abs(bestSucMinimax) > MAX_DISCOUNT) {
+    memo_[board] = bestSucMinimax;
   }
 #endif
 
@@ -134,6 +146,6 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
 }
 
 float AgentMinimax::heuristic(const Board &board) const {
-  array<size_t, 2> threatCount = board.getThreatCount();
+  std::array<size_t, 2> threatCount = board.getThreatCount();
   return threatCount[0] * threatWeight_ - threatCount[1] * threatWeight_;
 }
