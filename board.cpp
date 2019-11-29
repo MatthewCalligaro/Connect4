@@ -37,8 +37,8 @@ bool Board::isWon() const {
 
 bool Board::isDraw() const {
   const uint64_t drawBoard =
-      ((1L << 48) - 1) ^
-      ((1 << 6) | (1 << 13) | (1 << 20) | (1 << 27) | (1L << 34) | (1L << 41));
+      ((1UL << 48) - 1) ^
+      ((1 << 6) | (1 << 13) | (1 << 20) | (1 << 27) | (1UL << 34) | (1UL << 41));
   return drawBoard == (masks_[0] | masks_[1]);
 }
 
@@ -89,8 +89,8 @@ std::array<size_t, 2> Board::getThreatCount() const {
       if ((board >> bit) & 1) {
         break;
       }
-      threatCount[0] += isWon(masks_[0] | (1L << bit));
-      threatCount[1] += isWon(masks_[1] | (1L << bit));
+      threatCount[0] += isWon(masks_[0] | (1UL << bit));
+      threatCount[1] += isWon(masks_[1] | (1UL << bit));
     }
   }
   return threatCount;
@@ -122,7 +122,7 @@ void Board::handleMove(size_t move) {
   }
 
   // Place a piece at bit in the correct mask and toggle turn_
-  masks_[turn_] |= (1L << bit);
+  masks_[turn_] |= (1UL << bit);
   turn_ = !turn_;
 }
 
