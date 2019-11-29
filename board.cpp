@@ -5,6 +5,8 @@
 #include <ostream>
 #include <vector>
 
+size_t const Board::MOVE_ORDER[7] = {3, 2, 4, 1, 5, 0, 6};
+
 Board::Board() : masks_{0, 0}, turn_{0} {}
 
 Board::Board(uint64_t xMask, uint64_t oMask) : masks_{xMask, oMask} {
@@ -77,6 +79,13 @@ std::vector<size_t> Board::getSuccessors() const {
   }
 
   return sucs;
+}
+
+size_t Board::getSuccessorsFast() const {
+  uint64_t invBoard = ~(masks_[0] | masks_[1]);
+  return ((invBoard >> 26) & 1) | ((invBoard >> 18) & 2) |
+         ((invBoard >> 31) & 4) | ((invBoard >> 9) & 8) |
+         ((invBoard >> 36) & 16) | (invBoard & 32) | ((invBoard >> 41) & 64);
 }
 
 std::array<size_t, 2> Board::getThreatCount() const {

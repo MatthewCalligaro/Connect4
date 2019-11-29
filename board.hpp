@@ -19,6 +19,8 @@
 
 class Board {
  public:
+  static const size_t MOVE_ORDER[7];
+
   Board();
   Board(const Board &other) = default;
   Board(uint64_t xMask, uint64_t oMask);
@@ -32,6 +34,7 @@ class Board {
   bool isDraw() const;
   bool isValidMove(size_t move) const;
   std::vector<size_t> getSuccessors() const;
+  size_t getSuccessorsFast() const;
   std::array<size_t, 2> getThreatCount() const;
   std::ostream &print(std::ostream &os) const;
 
