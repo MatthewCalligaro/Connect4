@@ -9,7 +9,7 @@
 using std::array;
 using std::vector;
 
-AgentMinimax::AgentMinimax() : AgentMinimax(4, 0.99, 0.01) {}
+AgentMinimax::AgentMinimax() : AgentMinimax(6, 0.99, 0.01) {}
 
 AgentMinimax::AgentMinimax(size_t firstDepth, float discount,
                            float threatWeight)

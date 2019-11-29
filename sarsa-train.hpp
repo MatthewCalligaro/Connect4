@@ -13,6 +13,7 @@ class LSARSATrain {
     size_t NUM_EPISODES = 10000;
     static double getQValue(Board board, vector<double> theta);
     static vector<size_t> extractFeatures(Board board);
+    static size_t getPiece(int row, int col, vector<char> boardVec);
     size_t trainingFor = 0;
     bool isQ = true;
     vector<double> sarsaTrain(Board board);
@@ -23,7 +24,7 @@ class LSARSATrain {
     double reward(Board board);
 
   private:
-    size_t getSubstringCount(std::string mainStr, std::string subStr)
+    size_t getSubstringCount(std::string mainStr, std::string subStr);
 
 };
 

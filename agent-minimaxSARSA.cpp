@@ -10,7 +10,7 @@
 using std::array;
 using std::vector;
 
-AgentMinimaxSARSA::AgentMinimaxSARSA(vector<double> theta) : AgentMinimaxSARSA(4, 0.99, 0.01, theta) {}
+AgentMinimaxSARSA::AgentMinimaxSARSA(vector<double> theta) : AgentMinimaxSARSA(6, 0.99, 0.01, theta) {}
 
 AgentMinimaxSARSA::AgentMinimaxSARSA(size_t firstDepth, float discount,
                            float threatWeight, vector<double> theta)

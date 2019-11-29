@@ -31,10 +31,27 @@ vector<size_t> LSARSATrain::extractFeatures(Board board) {
     }
   }
   
-  vector<char> boardVector = board.getBoardVector();
-  for (size_t i = 0; i < 7; ++i){
-     
-  }
+  // size_t scoreSelf = 0;
+  // size_t scoreOpp = 0;
+  // vector<char> boardVector = board.getBoardVector();
+  // for (size_t i = 0; i < 6; ++i){
+  //     size_t piece = getPiece(i, 3, boardVector);
+  //     if (piece < 2){
+  //         if (piece == board.getTurn()){
+  //           ++scoreSelf;
+  //         } else {
+  //           ++scoreOpp;
+  //         }
+  //     }
+  // }
+  // score = scoreSelf*4 + scoreOpp;
+  // for (size_t i = 9; i<25; ++i){
+  //   if (i - 9 == score){
+  //     output[i] = 1;
+  //   } else {
+  //     output[i] = 0;
+  //   }
+  // }
 
   return output;
 }
@@ -94,7 +111,7 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
   for (size_t i = 0; i < VECTOR_SIZE; ++i) {
     // double a_random_double = unif(re);
     // theta[i] = a_random_double;
-    theta[i] = 0.1;
+    theta[i] = 0.5;
   }
   // std::ostringstream oss2;
   // std::copy(theta.begin(), theta.end()-1,
@@ -128,11 +145,11 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
       q_prime = std::get<1>(actionTup);
     }
   }
-  // std::ostringstream oss;
-  // std::copy(theta.begin(), theta.end()-1,
-  //       std::ostream_iterator<float>(oss, ","));
-  // oss << theta.back();
-  // std::cout << oss.str() << std::endl;
+  std::ostringstream oss;
+  std::copy(theta.begin(), theta.end()-1,
+        std::ostream_iterator<float>(oss, ","));
+  oss << theta.back();
+  std::cout << oss.str() << std::endl;
   return theta;
 }
 
@@ -180,5 +197,16 @@ std::tuple<size_t, double> LSARSATrain::getEGreedyAction(Board board,
     return std::make_tuple(pos, qval);
   } else {
     return getAction(board, theta);
+  }
+}
+
+size_t LSARSATrain::getPiece(int row, int col, vector<char> boardVec){
+  char c = boardVec[row*7 + col];
+  if (c == 'X'){
+    return 0;
+  } else if (c == 'O') {
+    return 1;
+  } else {
+    return 2;
   }
 }
