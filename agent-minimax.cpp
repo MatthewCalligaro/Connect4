@@ -23,14 +23,13 @@ AgentMinimax::AgentMinimax(size_t firstDepth, float threatWeight)
 #if PRECOMPUTED
   memo_ = precomp;
 #endif
-  std::cout << memo_.size() << std::endl;
 }
 
 void AgentMinimax::getMove(
     const Board &board, size_t &move,
     const std::chrono::system_clock::time_point &endTime) {
   size_t turn = board.getTurn();
-  std::vector<size_t> moves = board.getSuccessors();
+  size_t legalMoves = board.getSuccessorsFast();
   float bestSucMinimax = 0;
 
 #if ITERATIVE_DEEPENING
@@ -46,19 +45,25 @@ void AgentMinimax::getMove(
     bestSucMinimax = -256 + (turn * 512.0);
 
     // Find the best move
-    for (size_t move : moves) {
+    for (size_t moves = legalMoves, curMove = 3; moves;
+         moves >>= 1, curMove = 6 - curMove - curMove / 3) {
+      // Skip if this is not a legal move
+      if (!(moves & 1)) {
+        continue;
+      }
+
       // Calculate the minimax of the successor state
       Board sucBoard = board;
-      sucBoard.handleMove(move);
+      sucBoard.handleMove(curMove);
       float sucMinimax = DISCOUNT * minimax(sucBoard, depth - 1, alpha, beta);
 
       // If this successor is the best so far, update values
       if (!turn && sucMinimax > bestSucMinimax) {
-        bestMove = move;
+        bestMove = curMove;
         bestSucMinimax = sucMinimax;
         alpha = std::max(alpha, bestSucMinimax);
       } else if (turn && sucMinimax < bestSucMinimax) {
-        bestMove = move;
+        bestMove = curMove;
         bestSucMinimax = sucMinimax;
         beta = std::min(beta, bestSucMinimax);
       }
@@ -111,12 +116,17 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
   }
 
   // Find the best successor
-  std::vector<size_t> moves = board.getSuccessors();
   float bestSucMinimax = -256 + (turn * 512.0);
-  for (size_t move : moves) {
+  for (size_t moves = board.getSuccessorsFast(), curMove = 3; moves;
+       moves >>= 1, curMove = 6 - curMove - curMove / 3) {
+    // Skip if this is not a legal move
+    if (!(moves & 1)) {
+      continue;
+    }
+
     // Calculate the minimax of the successor state
     Board sucBoard = board;
-    sucBoard.handleMove(move);
+    sucBoard.handleMove(curMove);
     float sucMinimax = DISCOUNT * minimax(sucBoard, depth - 1, alpha, beta);
 
     // If this successor is the best so far, update values
