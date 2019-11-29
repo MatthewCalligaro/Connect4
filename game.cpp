@@ -96,7 +96,7 @@ size_t Game::execute(std::array<double, 42> &xMoveTimes,
   return (move_ + 1) % 2;
 }
 
-ostream &Game::printBoard(ostream &os) const {
+std::ostream &Game::printBoard(std::ostream &os) const {
   os << board_;
   return os;
 }

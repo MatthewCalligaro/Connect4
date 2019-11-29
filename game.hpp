@@ -22,7 +22,7 @@ class Game {
   size_t execute(bool verbose = false);
   size_t execute(std::array<double, 42> &xMoveTimes,
                  std::array<double, 42> &oMoveTimes, bool verbose = false);
-  std::ostream &printBoard(ostream &os) const;
+  std::ostream &printBoard(std::ostream &os) const;
 
  private:
   static const size_t NO_MOVE = 15942;

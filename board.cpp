@@ -37,8 +37,8 @@ bool Board::isWon() const {
 
 bool Board::isDraw() const {
   const uint64_t drawBoard =
-      ((1UL << 48) - 1) ^
-      ((1 << 6) | (1 << 13) | (1 << 20) | (1 << 27) | (1UL << 34) | (1UL << 41));
+      ((1UL << 48) - 1) ^ ((1 << 6) | (1 << 13) | (1 << 20) | (1 << 27) |
+                           (1UL << 34) | (1UL << 41));
   return drawBoard == (masks_[0] | masks_[1]);
 }
 

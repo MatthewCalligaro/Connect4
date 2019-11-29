@@ -1,3 +1,5 @@
+// Copyright 2019 Matthew Calligaro
+
 #include "precomputed-values.hpp"
 #include <unordered_map>
 

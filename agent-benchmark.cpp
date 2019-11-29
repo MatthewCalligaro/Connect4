@@ -17,7 +17,7 @@ void AgentBenchmark::getMove(
     const Board &board, size_t &move,
     const std::chrono::system_clock::time_point &endTime) {
   size_t turn = board.getTurn();
-  vector<size_t> moves = board.getSuccessors();
+  std::vector<size_t> moves = board.getSuccessors();
   float bestSucMinimax = 0;
 
   size_t bestMove = 3;
@@ -30,7 +30,8 @@ void AgentBenchmark::getMove(
     // Calculate the minimax of the successor state
     Board sucBoard = board;
     sucBoard.handleMove(move);
-    float sucMinimax = DISCOUNT * minimax(sucBoard, firstDepth_ - 1, alpha, beta);
+    float sucMinimax =
+        DISCOUNT * minimax(sucBoard, firstDepth_ - 1, alpha, beta);
 
     // If this successor is the best so far, update values
     if (!turn && sucMinimax > bestSucMinimax) {
@@ -46,7 +47,7 @@ void AgentBenchmark::getMove(
     if (alpha >= beta) {
       break;
     }
-    
+
     // If we have surpassed the endTime given by the caller, yield to caller
     if (std::chrono::system_clock::now() >= endTime) {
       return;
