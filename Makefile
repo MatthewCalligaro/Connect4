@@ -6,7 +6,7 @@ LIBRARIES = -lpthread
 
 all: $(TARGET)
 
-$(TARGET): c4.o game.o agent-null.o agent-human.o agent-minimax.o \
+$(TARGET): c4.o game.o agent-null.o agent-human.o agent-mcts.o agent-minimax.o \
 	agent-benchmark.o board.o precomputed-values.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBRARIES)
 
@@ -14,6 +14,9 @@ agent-null.o: agent-null.cpp agent-null.hpp agent.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 	
 agent-human.o: agent-human.cpp agent-human.hpp agent.hpp
+	$(CXX) $< -c $(CXXFLAGS)
+
+agent-mcts.o: agent-mcts.cpp agent-mcts.hpp agent.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
 agent-minimax.o: agent-minimax.cpp agent-minimax.hpp agent.hpp \
