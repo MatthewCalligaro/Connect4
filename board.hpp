@@ -33,6 +33,7 @@ class Board {
   bool isWon() const;
   bool isDraw() const;
   bool isValidMove(size_t move) const;
+  float getReward() const;
   std::vector<size_t> getSuccessors() const;
   size_t getSuccessorsFast() const;
   std::array<size_t, 2> getThreatCount() const;

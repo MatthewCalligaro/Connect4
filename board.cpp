@@ -51,6 +51,10 @@ bool Board::isValidMove(size_t move) const {
   return !(((masks_[0] | masks_[1]) >> (move * 7 + 5)) & 1);
 }
 
+float Board::getReward() const {
+  return isWon() * (turn_ * 2.0 - 1.0);
+}
+
 std::vector<size_t> Board::getSuccessors() const {
   std::vector<size_t> sucs;
   uint64_t invBoard = ~(masks_[0] | masks_[1]);
