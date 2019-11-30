@@ -6,6 +6,7 @@
 #include <ostream>
 #include <queue>
 #include <string>
+#include <vector>
 #include "agent.hpp"
 
 class AgentMCTS : public Agent {
@@ -51,7 +52,7 @@ class AgentMCTS : public Agent {
    public:
     Root() = delete;
     Root(const Root& other) = delete;
-    Root(const Board& board);
+    explicit Root(const Board& board);
     ~Root() = default;
     Root& operator=(const Root& other) = delete;
 
