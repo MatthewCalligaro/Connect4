@@ -4,15 +4,17 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <random>
 #include <string>
 #include <vector>
 
-AgentBenchmark::AgentBenchmark() : AgentBenchmark(4, 0, 0) {}
+AgentBenchmark::AgentBenchmark() : AgentBenchmark(4, false) {}
 
-AgentBenchmark::AgentBenchmark(size_t depth, float threatWeight, float epsilon)
-    : AgentMinimax(depth, threatWeight), epsilon_{epsilon} {}
+AgentBenchmark::AgentBenchmark(size_t depth, bool random)
+    : AgentMinimax(depth, 0),
+      random_{random},
+      generator_(std::random_device()()) {}
 
-// TODO(MatthewCalligaro): Make a random move with probability epsilon
 void AgentBenchmark::getMove(
     const Board &board, size_t &move,
     const std::chrono::system_clock::time_point &endTime) {
@@ -43,6 +45,7 @@ void AgentBenchmark::getMove(
       bestSucMinimax = sucMinimax;
       beta = std::min(beta, bestSucMinimax);
     }
+
     // If alpha > beta, do not explore any further
     if (alpha >= beta) {
       break;
@@ -55,6 +58,15 @@ void AgentBenchmark::getMove(
   }
 
   move = bestMove;
+}
+
+float AgentBenchmark::heuristic(const Board &board) {
+  std::uniform_real_distribution dist(-0.5, 0.5);
+
+  if (random_) {
+    return dist(generator_);
+  }
+  return 0;
 }
 
 std::string AgentBenchmark::getAgentName() const { return "Benchmark"; }
