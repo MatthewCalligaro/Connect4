@@ -1,6 +1,6 @@
 
 CXX = clang++
-CXXFLAGS = -O3 -std=c++1z -Wall -Wextra -pedantic
+CXXFLAGS = -O3 -std=c++1z -Wall -Wextra -pedantic -g
 TARGET = c4
 LIBRARIES = -lpthread
 
