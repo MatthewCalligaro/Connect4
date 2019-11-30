@@ -3,6 +3,7 @@
 #ifndef AGENT_MCTS_HPP_
 #define AGENT_MCTS_HPP_
 
+#include <queue>
 #include <string>
 #include "agent.hpp"
 
@@ -25,18 +26,19 @@ class AgentMCTS : public Agent {
     Node& operator=(const Node& other) = delete;
 
     float uct(size_t parentN) const;
-    void fillChildren();
+    bool fullyExplored() const;
+    Node* bestUCTChild() const;
+    float rollout();
 
     Board board_;
+    std::queue<size_t> unvisited_;
     Node* children_[7];
     size_t numChildren_;
     float q_;
     size_t n_;
-    bool fullyExplored_;
   };
 
-  static float traverse(const Node* node);
-  static float rollout(const Node* node);
+  static float traverse(Node* node);
 
   Node* root_;
 };
