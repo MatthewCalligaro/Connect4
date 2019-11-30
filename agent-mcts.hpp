@@ -5,8 +5,10 @@
 
 #include <ostream>
 #include <queue>
+#include <random>
 #include <string>
 #include <vector>
+#include "agent-benchmark.hpp"
 #include "agent.hpp"
 
 class AgentMCTS : public Agent {
@@ -15,7 +17,6 @@ class AgentMCTS : public Agent {
   class Root;
 
  public:
-  AgentMCTS() = default;
   void getMove(const Board& board, size_t& move,
                const std::chrono::system_clock::time_point& endTime) override;
   std::string getAgentName() const override;
@@ -41,7 +42,7 @@ class AgentMCTS : public Agent {
     float q_;
     size_t n_;
 
-    float uct(size_t parentN, bool verbose = false) const;
+    float uct(size_t parentN) const;
     bool fullyExplored() const;
     size_t bestUCTChild() const;
     float traverse();
@@ -64,7 +65,7 @@ class AgentMCTS : public Agent {
     size_t bestChild_;
   };
 
-  static float traverse(Node* node);
+  static AgentBenchmark RAND_AGENT;
 };
 
 #endif  // AGENT_MCTS_HPP_

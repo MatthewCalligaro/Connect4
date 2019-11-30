@@ -24,7 +24,7 @@ class AgentMinimax : public Agent {
   std::unordered_map<Board, float, BoardHasher> memo_;
 
   float minimax(Board board, size_t depth, float alpha, float beta);
-  float heuristic(const Board &board) const;
+  virtual float heuristic(const Board &board);
 };
 
 #endif  // AGENT_MINIMAX_HPP_

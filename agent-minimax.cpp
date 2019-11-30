@@ -155,7 +155,7 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
   return bestSucMinimax;
 }
 
-float AgentMinimax::heuristic(const Board &board) const {
+float AgentMinimax::heuristic(const Board &board) {
   std::array<size_t, 2> threatCount = board.getThreatCount();
   return threatCount[0] * threatWeight_ - threatCount[1] * threatWeight_;
 }

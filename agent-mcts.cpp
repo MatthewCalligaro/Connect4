@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+AgentBenchmark AgentMCTS::RAND_AGENT(3, true);
+
 void AgentMCTS::getMove(const Board& board, size_t& move,
                         const std::chrono::system_clock::time_point& endTime) {
   Root root(board);
@@ -47,18 +49,8 @@ AgentMCTS::Node::~Node() {
   }
 }
 
-float AgentMCTS::Node::uct(size_t parentN, bool verbose) const {
-  if (verbose) {
-    std::cout << ">> q: " << q_ << std::endl;
-    std::cout << ">> n: " << n_ << std::endl;
-    std::cout << ">> parentN: " << parentN << std::endl;
-    std::cout << ">> board.getTurn(): " << board_.getTurn() << std::endl;
-    std::cout << ">> first term: " << q_ * (1.0 - 2.0 * board_.getTurn()) / n_
-              << std::endl;
-    std::cout << ">> second term: " << C * sqrt(std::log(parentN) / n_)
-              << std::endl;
-  }
-  return q_ * (1.0 - 2.0 * board_.getTurn()) / n_ +
+float AgentMCTS::Node::uct(size_t parentN) const {
+  return q_ * (-1.0 + 2.0 * board_.getTurn()) / n_ +
          C * sqrt(std::log(parentN) / n_);
 }
 
@@ -86,17 +78,6 @@ float AgentMCTS::Node::traverse() {
       // If node is terminal, use its reward
       reward = board_.getReward();
     } else {
-      // Traverse to child with highest UCT
-      if (bestUCTChild() > numChildren_) {
-        std::cout << "numChildren_: " << numChildren_ << std::endl;
-        std::cout << "n_: " << n_ << std::endl;
-        std::cout << "Traverse: " << bestUCTChild() << std::endl;
-
-        for (size_t i = 0; i < numChildren_; ++i) {
-          std::cout << "UCT (" << i << "): " << children_[i]->uct(n_, true)
-                    << std::endl;
-        }
-      }
       reward = children_[bestUCTChild()]->traverse();
     }
   } else {
@@ -122,10 +103,12 @@ float AgentMCTS::Node::rollout() {
   // Play with a random uniform strategy to completion
   std::default_random_engine generator(
       std::chrono::system_clock::now().time_since_epoch().count());
+
+  size_t move;
   while (!(curBoard.isWon() || curBoard.isDraw())) {
-    std::vector<size_t> moves = curBoard.getSuccessors();
-    std::uniform_int_distribution<size_t> dist(0, moves.size() - 1);
-    curBoard.handleMove(moves[dist(generator)]);
+    RAND_AGENT.getMove(curBoard, move,
+                       std::chrono::system_clock::time_point::max());
+    curBoard.handleMove(move);
   }
 
   children_[numChildren_ - 1]->q_ += curBoard.getReward();
@@ -148,7 +131,6 @@ AgentMCTS::Root::Root(const Board& board)
 
 size_t AgentMCTS::Root::iterate() {
   size_t child = bestUCTChild();
-  // std::cout << "Iterate: " << child << std::endl;
   q_ += children_[child]->traverse();
   ++n_;
 
@@ -166,7 +148,8 @@ std::ostream& AgentMCTS::Root::printStats(std::ostream& os) {
        << "): n_=" << children_[i]->n_ << " q_=" << children_[i]->q_
        << " uct=" << children_[i]->uct(n_) << std::endl;
   }
-  os << "Best Child: " << bestChild_ << " (move " << moves_[bestChild_] << ")"
-     << std::endl;
+  os << ">> Best Child: " << bestChild_ << " (move " << moves_[bestChild_]
+     << ")" << std::endl;
+  os << ">> Total Explorations: " << n_ << std::endl << std::endl;
   return os;
 }
