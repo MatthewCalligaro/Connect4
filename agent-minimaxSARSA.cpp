@@ -2,6 +2,7 @@
 
 #include "agent-minimaxSARSA.hpp"
 #include "sarsa-train.hpp"
+#include "mc-train.hpp"
 #include <algorithm>
 #include <array>
 #include <string>
@@ -10,7 +11,7 @@
 using std::array;
 using std::vector;
 
-AgentMinimaxSARSA::AgentMinimaxSARSA(vector<double> theta) : AgentMinimaxSARSA(6, 0.99, 0.01, theta) {}
+AgentMinimaxSARSA::AgentMinimaxSARSA(vector<double> theta) : AgentMinimaxSARSA(8, 0.99, 0.01, theta) {}
 
 AgentMinimaxSARSA::AgentMinimaxSARSA(size_t firstDepth, float discount,
                            float threatWeight, vector<double> theta)
@@ -101,5 +102,6 @@ float AgentMinimaxSARSA::minimax(Board board, size_t depth, float alpha,
 }
 
 float AgentMinimaxSARSA::heuristic(const Board &board) const {
-  return LSARSATrain::getQValue(board, theta);
+  // return LSARSATrain::getQValue(board, theta);
+  return MonteCarloTrain::getQValue(board, theta);
 }

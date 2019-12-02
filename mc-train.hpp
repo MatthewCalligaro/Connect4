@@ -7,15 +7,14 @@
 
 class MonteCarloTrain {
   public:
-    LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES);
-    ~LSARSATrain() = default;
+    MonteCarloTrain(size_t turn, size_t NUM_EPISODES);
+    ~MonteCarloTrain() = default;
     static const size_t VECTOR_SIZE = 9;
     size_t NUM_EPISODES = 10000;
-    static double getQValue(Board board, vector<double> theta);
     static vector<size_t> extractFeatures(Board board);
     static size_t getPiece(int row, int col, vector<char> boardVec);
     size_t trainingFor = 0;
-    bool isQ = true;
+    static double getQValue(Board board, vector<double> theta);
     vector<double> mcTrain(Board board);
     vector<double> mcTrain();
     static std::tuple<size_t, double> getAction(Board board, vector<double> theta);

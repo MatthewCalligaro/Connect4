@@ -1,4 +1,4 @@
-#include "sarsa-train.hpp"
+#include "mc-train.hpp"
 #include <time.h>
 #include <iostream>
 #include <random>
@@ -7,11 +7,12 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+#include <map>
 
 using std::cout;
 using std::endl;
 
-MonteCarloTrain::MonteCarloTrain(size_t turn, bool isQ, size_t NUM_EPISODES):  NUM_EPISODES{NUM_EPISODES}, trainingFor{turn}, isQ{isQ} {};
+MonteCarloTrain::MonteCarloTrain(size_t turn, size_t NUM_EPISODES):  NUM_EPISODES{NUM_EPISODES}, trainingFor{turn} {};
 
 vector<size_t> MonteCarloTrain::extractFeatures(Board board) {
   array<size_t, 2> threatCount = board.getThreatCount();
@@ -31,27 +32,27 @@ vector<size_t> MonteCarloTrain::extractFeatures(Board board) {
     }
   }
   
-  // size_t scoreSelf = 0;
-  // size_t scoreOpp = 0;
-  // vector<char> boardVector = board.getBoardVector();
-  // for (size_t i = 0; i < 6; ++i){
-  //     size_t piece = getPiece(i, 3, boardVector);
-  //     if (piece < 2){
-  //         if (piece == board.getTurn()){
-  //           ++scoreSelf;
-  //         } else {
-  //           ++scoreOpp;
-  //         }
-  //     }
-  // }
-  // score = scoreSelf*4 + scoreOpp;
-  // for (size_t i = 9; i<25; ++i){
-  //   if (i - 9 == score){
-  //     output[i] = 1;
-  //   } else {
-  //     output[i] = 0;
-  //   }
-  // }
+  size_t scoreSelf = 0;
+  size_t scoreOpp = 0;
+  vector<char> boardVector = board.getBoardVector();
+  for (size_t i = 0; i < 6; ++i){
+      size_t piece = getPiece(i, 3, boardVector);
+      if (piece < 2){
+          if (piece == board.getTurn()){
+            ++scoreSelf;
+          } else {
+            ++scoreOpp;
+          }
+      }
+  }
+  score = scoreSelf*4 + scoreOpp;
+  for (size_t i = 9; i<25; ++i){
+    if (i - 9 == score){
+      output[i] = 1;
+    } else {
+      output[i] = 0;
+    }
+  }
 
   return output;
 }
@@ -90,13 +91,14 @@ double MonteCarloTrain::getQValue(Board board, vector<double> theta) {
   return q;
 }
 
-vector<double> MonteCarloTrain::sarsaTrain(){
+vector<double> MonteCarloTrain::mcTrain(){
   Board board = Board();
-  return sarsaTrain(board);
+  return mcTrain(board);
 }
 
-vector<double> MonteCarloTrain::sarsaTrain(Board board) {
+vector<double> MonteCarloTrain::mcTrain(Board board) {
   vector<double> theta = vector<double>(VECTOR_SIZE);
+  vector<size_t> counts = vector<size_t>(VECTOR_SIZE);
   const float EPSILON = 0.1;
   const float ALPHA = 0.3;
   const float GAMMA = 0.9;
@@ -111,7 +113,8 @@ vector<double> MonteCarloTrain::sarsaTrain(Board board) {
   for (size_t i = 0; i < VECTOR_SIZE; ++i) {
     // double a_random_double = unif(re);
     // theta[i] = a_random_double;
-    theta[i] = 0.5;
+    theta[i] = 0;
+    counts[i] = 0;
   }
   // std::ostringstream oss2;
   // std::copy(theta.begin(), theta.end()-1,
@@ -126,24 +129,37 @@ vector<double> MonteCarloTrain::sarsaTrain(Board board) {
     std::tuple<size_t, double> actionTup =
         getEGreedyAction(boardCopy, theta, EPSILON, true);
     size_t action = std::get<0>(actionTup);
-    double q_prime = std::get<1>(actionTup);
+    vector<std::tuple<vector<size_t>, double>> episodeVector = vector<std::tuple<vector<size_t>, double>>();
     while (!boardCopy.isDraw() && !boardCopy.isWon()) {
-      double q = getQValue(boardCopy, theta);
       boardCopy.handleMove(action);
       if (boardCopy.getTurn() != trainingFor){
         double r = reward(boardCopy);
-        double delta = r + GAMMA * (q_prime) - q;
         vector<size_t> activeFeatures = extractFeatures(boardCopy);
-        for (size_t i = 0; i < VECTOR_SIZE; ++i) {
-          if (activeFeatures[i] > 0) {
-            theta[i] += ALPHA*delta;
-          };
-        }
+        auto stepTup = std::make_tuple(activeFeatures, r);
+        episodeVector.push_back(stepTup);
       }
       actionTup = getEGreedyAction(board, theta, EPSILON, true);
       action = std::get<0>(actionTup);
-      q_prime = std::get<1>(actionTup);
     }
+    for (size_t i = 0; i < episodeVector.size() ; ++i){
+        double r = 0;
+        for (size_t j = i; j < episodeVector.size() ; ++j){
+            std::tuple<vector<size_t>, double> epJ = episodeVector[j];
+            double rTot = std::get<1>(epJ);
+            r += pow(GAMMA,(j-i))*rTot;
+        }
+         std::tuple<vector<size_t>, double> epI = episodeVector[i];
+        auto currState = std::get<0>(epI);
+        
+        for (size_t j = 0; j <VECTOR_SIZE; ++j){
+          if (currState[j] > 0) {
+            counts[i] += 1;
+            theta[i] = ALPHA*(counts[i]*theta[i] + r);
+          };
+        }
+    }
+
+
   }
   std::ostringstream oss;
   std::copy(theta.begin(), theta.end()-1,
