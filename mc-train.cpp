@@ -32,27 +32,27 @@ vector<size_t> MonteCarloTrain::extractFeatures(Board board) {
     }
   }
   
-  size_t scoreSelf = 0;
-  size_t scoreOpp = 0;
-  vector<char> boardVector = board.getBoardVector();
-  for (size_t i = 0; i < 6; ++i){
-      size_t piece = getPiece(i, 3, boardVector);
-      if (piece < 2){
-          if (piece == board.getTurn()){
-            ++scoreSelf;
-          } else {
-            ++scoreOpp;
-          }
-      }
-  }
-  score = scoreSelf*4 + scoreOpp;
-  for (size_t i = 9; i<25; ++i){
-    if (i - 9 == score){
-      output[i] = 1;
-    } else {
-      output[i] = 0;
-    }
-  }
+  // size_t scoreSelf = 0;
+  // size_t scoreOpp = 0;
+  // vector<char> boardVector = board.getBoardVector();
+  // for (size_t i = 0; i < 6; ++i){
+  //     size_t piece = getPiece(i, 3, boardVector);
+  //     if (piece < 2){
+  //         if (piece == board.getTurn()){
+  //           ++scoreSelf;
+  //         } else {
+  //           ++scoreOpp;
+  //         }
+  //     }
+  // }
+  // score = scoreSelf*4 + scoreOpp;
+  // for (size_t i = 9; i<25; ++i){
+  //   if (i - 9 == score){
+  //     output[i] = 1;
+  //   } else {
+  //     output[i] = 0;
+  //   }
+  // }
 
   return output;
 }
