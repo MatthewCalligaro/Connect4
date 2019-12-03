@@ -26,9 +26,9 @@ class Board {
   Board(uint64_t xMask, uint64_t oMask);
   ~Board() = default;
   Board &operator=(const Board &other) = default;
-
+  vector<char> getBoardVector();
   bool operator==(const Board &rhs) const;
-
+  
   size_t getTurn() const;
   bool isWon() const;
   bool isDraw() const;
