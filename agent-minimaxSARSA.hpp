@@ -1,4 +1,4 @@
-// Copyright 2019 Matthew Calligaro
+// Copyright 2019 Aditya Khant
 
 #ifndef AGENT_MINIMAXSARSA_HPP_
 #define AGENT_MINIMAXSARSA_HPP_
@@ -9,8 +9,9 @@
 
 class AgentMinimaxSARSA : public Agent {
  public:
-  AgentMinimaxSARSA(vector<double> theta);
-  AgentMinimaxSARSA(size_t firstDepth, float discount, float threatWeight, vector<double> theta);
+  explicit AgentMinimaxSARSA(vector<double> theta);
+  AgentMinimaxSARSA(size_t firstDepth, float discount, float threatWeight,
+                    vector<double> theta);
   void getMove(const Board &board, size_t &move) override;
   std::string getAgentName() const override;
 
@@ -25,4 +26,4 @@ class AgentMinimaxSARSA : public Agent {
   float heuristic(const Board &board) const;
 };
 
-#endif  // AGENT_MINIMAX_HPP_
+#endif  // AGENT_MINIMAXSARSA_HPP_

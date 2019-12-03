@@ -1,3 +1,5 @@
+// Copyright 2019 Aditya Khant
+
 #ifndef AGENT_SARSA_HPP_
 #define AGENT_SARSA_HPP_
 
@@ -7,12 +9,11 @@
 #include "sarsa-train.hpp"
 
 class AgentSARSA : public Agent {
-  public: 
-  AgentSARSA(vector<double> theta);
+ public:
+  explicit AgentSARSA(vector<double> theta);
   void getMove(const Board &board, size_t &move) override;
   std::string getAgentName() const override;
   vector<double> theta;
-
 };
 
-#endif  // AGENT_MINIMAX_HPP_
+#endif  // AGENT_SARSA_HPP_

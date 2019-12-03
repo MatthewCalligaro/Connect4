@@ -1,20 +1,21 @@
 // Copyright 2019 Matthew Calligaro
 
 #include "agent-minimaxSARSA.hpp"
-#include "sarsa-train.hpp"
-#include "mc-train.hpp"
 #include <algorithm>
 #include <array>
 #include <string>
 #include <vector>
+#include "mc-train.hpp"
+#include "sarsa-train.hpp"
 
 using std::array;
 using std::vector;
 
-AgentMinimaxSARSA::AgentMinimaxSARSA(vector<double> theta) : AgentMinimaxSARSA(8, 0.99, 0.01, theta) {}
+AgentMinimaxSARSA::AgentMinimaxSARSA(vector<double> theta)
+    : AgentMinimaxSARSA(4, 0.99, 0.01, theta) {}
 
 AgentMinimaxSARSA::AgentMinimaxSARSA(size_t firstDepth, float discount,
-                           float threatWeight, vector<double> theta)
+                                     float threatWeight, vector<double> theta)
     : firstDepth_{firstDepth},
       discount_{discount},
       threatWeight_{threatWeight},
@@ -59,7 +60,7 @@ void AgentMinimaxSARSA::getMove(const Board &board, size_t &move) {
 std::string AgentMinimaxSARSA::getAgentName() const { return "MinimaxSARSA"; }
 
 float AgentMinimaxSARSA::minimax(Board board, size_t depth, float alpha,
-                            float beta) {
+                                 float beta) {
   size_t turn = board.getTurn();
   // Return 1 if X won, -1 if O won, or O if it is a draw
   if (board.isWon()) {

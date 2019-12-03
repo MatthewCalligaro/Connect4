@@ -7,16 +7,17 @@
 #include <memory>
 #include <ostream>
 #include <thread>
+#include <utility>
 
 using std::async;
 using std::cerr;
-using std::chrono::milliseconds;
-using std::chrono::system_clock;
 using std::endl;
 using std::future;
 using std::ostream;
 using std::promise;
 using std::shared_ptr;
+using std::chrono::milliseconds;
+using std::chrono::system_clock;
 
 void threadHelper(shared_ptr<Agent> agent, Board board,
                   shared_ptr<size_t> move) {

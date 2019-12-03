@@ -1,37 +1,40 @@
+// Copyright 2019 Aditya Khant
 #include "mc-train.hpp"
 #include <time.h>
 #include <iostream>
+#include <iterator>
+#include <map>
 #include <random>
+#include <sstream>
 #include <string>
 #include <tuple>
 #include <vector>
-#include <sstream>
-#include <iterator>
-#include <map>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
 
-MonteCarloTrain::MonteCarloTrain(size_t turn, size_t NUM_EPISODES):  NUM_EPISODES{NUM_EPISODES}, trainingFor{turn} {};
+MonteCarloTrain::MonteCarloTrain(size_t turn, size_t NUM_EPISODES)
+    : NUM_EPISODES{NUM_EPISODES}, trainingFor{turn} {};
 
 vector<size_t> MonteCarloTrain::extractFeatures(Board board) {
   array<size_t, 2> threatCount = board.getThreatCount();
   size_t score = 0;
-  if (board.getTurn()){
-    score = threatCount[0]*3 + threatCount[1];
+  if (board.getTurn()) {
+    score = threatCount[0] * 3 + threatCount[1];
   } else {
-    score = threatCount[1]*3 + threatCount[0];
+    score = threatCount[1] * 3 + threatCount[0];
   }
 
   vector<size_t> output = vector<size_t>(VECTOR_SIZE);
-  for (size_t i = 0; i<9; ++i){
-    if (i == score){
+  for (size_t i = 0; i < 9; ++i) {
+    if (i == score) {
       output[i] = 1;
     } else {
       output[i] = 0;
     }
   }
-  
+
   // size_t scoreSelf = 0;
   // size_t scoreOpp = 0;
   // vector<char> boardVector = board.getBoardVector();
@@ -57,16 +60,16 @@ vector<size_t> MonteCarloTrain::extractFeatures(Board board) {
   return output;
 }
 
-size_t MonteCarloTrain::getSubstringCount(std::string mainStr, std::string subStr){
-   size_t occurrences = 0;
-   std::string::size_type pos = 0;
-   while ((pos = mainStr.find(subStr, pos )) != std::string::npos) {
-          ++ occurrences;
-          ++pos;
-   }
-   return occurrences;
+size_t MonteCarloTrain::getSubstringCount(std::string mainStr,
+                                          std::string subStr) {
+  size_t occurrences = 0;
+  std::string::size_type pos = 0;
+  while ((pos = mainStr.find(subStr, pos)) != std::string::npos) {
+    ++occurrences;
+    ++pos;
+  }
+  return occurrences;
 }
-
 
 double MonteCarloTrain::reward(Board board) {
   if (board.isDraw()) {
@@ -91,7 +94,7 @@ double MonteCarloTrain::getQValue(Board board, vector<double> theta) {
   return q;
 }
 
-vector<double> MonteCarloTrain::mcTrain(){
+vector<double> MonteCarloTrain::mcTrain() {
   Board board = Board();
   return mcTrain(board);
 }
@@ -103,7 +106,7 @@ vector<double> MonteCarloTrain::mcTrain(Board board) {
   const float ALPHA = 0.3;
   const float GAMMA = 0.9;
   Board boardCopy = board;
-// 
+  //
   srand((unsigned)time(NULL));
   double lower_bound = 0;
   double upper_bound = 1;
@@ -129,10 +132,11 @@ vector<double> MonteCarloTrain::mcTrain(Board board) {
     std::tuple<size_t, double> actionTup =
         getEGreedyAction(boardCopy, theta, EPSILON, true);
     size_t action = std::get<0>(actionTup);
-    vector<std::tuple<vector<size_t>, double>> episodeVector = vector<std::tuple<vector<size_t>, double>>();
+    vector<std::tuple<vector<size_t>, double>> episodeVector =
+        vector<std::tuple<vector<size_t>, double>>();
     while (!boardCopy.isDraw() && !boardCopy.isWon()) {
       boardCopy.handleMove(action);
-      if (boardCopy.getTurn() != trainingFor){
+      if (boardCopy.getTurn() != trainingFor) {
         double r = reward(boardCopy);
         vector<size_t> activeFeatures = extractFeatures(boardCopy);
         auto stepTup = std::make_tuple(activeFeatures, r);
@@ -141,36 +145,34 @@ vector<double> MonteCarloTrain::mcTrain(Board board) {
       actionTup = getEGreedyAction(board, theta, EPSILON, true);
       action = std::get<0>(actionTup);
     }
-    for (size_t i = 0; i < episodeVector.size() ; ++i){
-        double r = 0;
-        for (size_t j = i; j < episodeVector.size() ; ++j){
-            std::tuple<vector<size_t>, double> epJ = episodeVector[j];
-            double rTot = std::get<1>(epJ);
-            r += pow(GAMMA,(j-i))*rTot;
+    for (size_t i = 0; i < episodeVector.size(); ++i) {
+      double r = 0;
+      for (size_t j = i; j < episodeVector.size(); ++j) {
+        std::tuple<vector<size_t>, double> epJ = episodeVector[j];
+        double rTot = std::get<1>(epJ);
+        r += pow(GAMMA, (j - i)) * rTot;
+      }
+      std::tuple<vector<size_t>, double> epI = episodeVector[i];
+      auto currState = std::get<0>(epI);
+
+      for (size_t j = 0; j < VECTOR_SIZE; ++j) {
+        if (currState[j] > 0) {
+          counts[i] += 1;
+          theta[i] = ALPHA * (counts[i] * theta[i] + r);
         }
-         std::tuple<vector<size_t>, double> epI = episodeVector[i];
-        auto currState = std::get<0>(epI);
-        
-        for (size_t j = 0; j <VECTOR_SIZE; ++j){
-          if (currState[j] > 0) {
-            counts[i] += 1;
-            theta[i] = ALPHA*(counts[i]*theta[i] + r);
-          };
-        }
+      }
     }
-
-
   }
   std::ostringstream oss;
-  std::copy(theta.begin(), theta.end()-1,
-        std::ostream_iterator<float>(oss, ","));
+  std::copy(theta.begin(), theta.end() - 1,
+            std::ostream_iterator<float>(oss, ","));
   oss << theta.back();
   std::cout << oss.str() << std::endl;
   return theta;
 }
 
 std::tuple<size_t, double> MonteCarloTrain::getAction(Board board,
-                                                  vector<double> theta) {
+                                                      vector<double> theta) {
   vector<size_t> successors = board.getSuccessors();
   size_t max_move = successors[0];
   double max_val = -9999;
@@ -186,10 +188,8 @@ std::tuple<size_t, double> MonteCarloTrain::getAction(Board board,
   return std::make_tuple(max_move, max_val);
 }
 
-std::tuple<size_t, double> MonteCarloTrain::getEGreedyAction(Board board,
-                                                         vector<double> theta,
-                                                         double epsilon,
-                                                         bool q) {
+std::tuple<size_t, double> MonteCarloTrain::getEGreedyAction(
+    Board board, vector<double> theta, double epsilon, bool q) {
   vector<size_t> successors = board.getSuccessors();
   double lower_bound = 0;
   double upper_bound = 1;
@@ -216,9 +216,9 @@ std::tuple<size_t, double> MonteCarloTrain::getEGreedyAction(Board board,
   }
 }
 
-size_t MonteCarloTrain::getPiece(int row, int col, vector<char> boardVec){
-  char c = boardVec[row*7 + col];
-  if (c == 'X'){
+size_t MonteCarloTrain::getPiece(int row, int col, vector<char> boardVec) {
+  char c = boardVec[row * 7 + col];
+  if (c == 'X') {
     return 0;
   } else if (c == 'O') {
     return 1;

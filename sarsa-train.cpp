@@ -1,36 +1,39 @@
+// Copyright 2019 Aditya Khant
 #include "sarsa-train.hpp"
 #include <time.h>
 #include <iostream>
+#include <iterator>
 #include <random>
+#include <sstream>
 #include <string>
 #include <tuple>
 #include <vector>
-#include <sstream>
-#include <iterator>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
 
-LSARSATrain::LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES):  NUM_EPISODES{NUM_EPISODES}, trainingFor{turn}, isQ{isQ} {};
+LSARSATrain::LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES)
+    : NUM_EPISODES{NUM_EPISODES}, trainingFor{turn}, isQ{isQ} {};
 
 vector<size_t> LSARSATrain::extractFeatures(Board board) {
   array<size_t, 2> threatCount = board.getThreatCount();
   size_t score = 0;
-  if (board.getTurn()){
-    score = threatCount[0]*3 + threatCount[1];
+  if (board.getTurn()) {
+    score = threatCount[0] * 3 + threatCount[1];
   } else {
-    score = threatCount[1]*3 + threatCount[0];
+    score = threatCount[1] * 3 + threatCount[0];
   }
 
   vector<size_t> output = vector<size_t>(VECTOR_SIZE);
-  for (size_t i = 0; i<9; ++i){
-    if (i == score){
+  for (size_t i = 0; i < 9; ++i) {
+    if (i == score) {
       output[i] = 1;
     } else {
       output[i] = 0;
     }
   }
-  
+
   // size_t scoreSelf = 0;
   // size_t scoreOpp = 0;
   // vector<char> boardVector = board.getBoardVector();
@@ -56,16 +59,15 @@ vector<size_t> LSARSATrain::extractFeatures(Board board) {
   return output;
 }
 
-size_t LSARSATrain::getSubstringCount(std::string mainStr, std::string subStr){
-   size_t occurrences = 0;
-   std::string::size_type pos = 0;
-   while ((pos = mainStr.find(subStr, pos )) != std::string::npos) {
-          ++ occurrences;
-          ++pos;
-   }
-   return occurrences;
+size_t LSARSATrain::getSubstringCount(std::string mainStr, std::string subStr) {
+  size_t occurrences = 0;
+  std::string::size_type pos = 0;
+  while ((pos = mainStr.find(subStr, pos)) != std::string::npos) {
+    ++occurrences;
+    ++pos;
+  }
+  return occurrences;
 }
-
 
 double LSARSATrain::reward(Board board) {
   if (board.isDraw()) {
@@ -90,7 +92,7 @@ double LSARSATrain::getQValue(Board board, vector<double> theta) {
   return q;
 }
 
-vector<double> LSARSATrain::sarsaTrain(){
+vector<double> LSARSATrain::sarsaTrain() {
   Board board = Board();
   return sarsaTrain(board);
 }
@@ -101,7 +103,7 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
   const float ALPHA = 0.3;
   const float GAMMA = 0.9;
   Board boardCopy = board;
-// 
+  //
   srand((unsigned)time(NULL));
   double lower_bound = 0;
   double upper_bound = 1;
@@ -130,14 +132,14 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
     while (!boardCopy.isDraw() && !boardCopy.isWon()) {
       double q = getQValue(boardCopy, theta);
       boardCopy.handleMove(action);
-      if (boardCopy.getTurn() != trainingFor){
+      if (boardCopy.getTurn() != trainingFor) {
         double r = reward(boardCopy);
-        double delta = r + GAMMA * (q_prime) - q;
+        double delta = r + GAMMA * (q_prime)-q;
         vector<size_t> activeFeatures = extractFeatures(boardCopy);
         for (size_t i = 0; i < VECTOR_SIZE; ++i) {
           if (activeFeatures[i] > 0) {
-            theta[i] += ALPHA*delta;
-          };
+            theta[i] += ALPHA * delta;
+          }
         }
       }
       actionTup = getEGreedyAction(board, theta, EPSILON, true);
@@ -146,8 +148,8 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
     }
   }
   std::ostringstream oss;
-  std::copy(theta.begin(), theta.end()-1,
-        std::ostream_iterator<float>(oss, ","));
+  std::copy(theta.begin(), theta.end() - 1,
+            std::ostream_iterator<float>(oss, ","));
   oss << theta.back();
   std::cout << oss.str() << std::endl;
   return theta;
@@ -200,9 +202,9 @@ std::tuple<size_t, double> LSARSATrain::getEGreedyAction(Board board,
   }
 }
 
-size_t LSARSATrain::getPiece(int row, int col, vector<char> boardVec){
-  char c = boardVec[row*7 + col];
-  if (c == 'X'){
+size_t LSARSATrain::getPiece(int row, int col, vector<char> boardVec) {
+  char c = boardVec[row * 7 + col];
+  if (c == 'X') {
     return 0;
   } else if (c == 'O') {
     return 1;
