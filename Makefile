@@ -8,7 +8,7 @@ all: $(TARGET)
 
 $(TARGET): c4.o game.o agent-null.o agent-human.o agent-mcts.o agent-minimax.o \
 	agent-benchmark.o board.o precomputed-values.o mc-train.o sarsa-train.o \
-  agent-sarsa.o agent-minimaxSARSA.o 
+    agent-sarsa.o agent-minimaxSARSA.o 
 
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBRARIES)
 

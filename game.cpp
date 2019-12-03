@@ -8,7 +8,6 @@
 #include <memory>
 #include <ostream>
 #include <thread>
-#include <utility>
 
 void threadHelper(std::shared_ptr<Agent> agent, Board board,
                   std::shared_ptr<size_t> move,
