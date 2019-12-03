@@ -5,12 +5,30 @@
 #include <ostream>
 #include <vector>
 
-using std::array;
-using std::endl;
-using std::ostream;
-using std::vector;
+size_t const Board::MOVE_ORDER[7] = {3, 2, 4, 1, 5, 0, 6};
 
-Board::Board() : turn_{0} {}
+Board::Board() : masks_{0, 0}, turn_{0} {}
+
+Board::Board(uint64_t xMask, uint64_t oMask) : masks_{xMask, oMask} {
+  // Count x and o pieces to determine turn
+  size_t xPieces = 0;
+  for (size_t i = 0; i < 47; ++i) {
+    xPieces += xMask & 1;
+    xMask >>= 1;
+  }
+
+  size_t oPieces = 0;
+  for (size_t i = 0; i < 47; ++i) {
+    oPieces += xMask & 1;
+    oMask >>= 1;
+  }
+
+  turn_ = xPieces > oPieces;
+}
+
+bool Board::operator==(const Board &rhs) const {
+  return masks_[0] == rhs.masks_[0] && masks_[1] == rhs.masks_[1];
+}
 
 size_t Board::getTurn() const { return turn_; }
 
@@ -21,8 +39,8 @@ bool Board::isWon() const {
 
 bool Board::isDraw() const {
   const uint64_t drawBoard =
-      ((1L << 48) - 1) ^
-      ((1 << 6) | (1 << 13) | (1 << 20) | (1 << 27) | (1L << 34) | (1L << 41));
+      ((1UL << 48) - 1) ^ ((1 << 6) | (1 << 13) | (1 << 20) | (1 << 27) |
+                           (1UL << 34) | (1UL << 41));
   return drawBoard == (masks_[0] | masks_[1]);
 }
 
@@ -33,8 +51,10 @@ bool Board::isValidMove(size_t move) const {
   return !(((masks_[0] | masks_[1]) >> (move * 7 + 5)) & 1);
 }
 
-vector<size_t> Board::getSuccessors() const {
-  vector<size_t> sucs;
+float Board::getReward() const { return isWon() * (turn_ * 2.0 - 1.0); }
+
+std::vector<size_t> Board::getSuccessors() const {
+  std::vector<size_t> sucs;
   uint64_t invBoard = ~(masks_[0] | masks_[1]);
 
   // We can play in any column in which the top bit is open
@@ -63,8 +83,15 @@ vector<size_t> Board::getSuccessors() const {
   return sucs;
 }
 
-array<size_t, 2> Board::getThreatCount() const {
-  array<size_t, 2> threatCount{{0, 0}};
+size_t Board::getSuccessorsFast() const {
+  uint64_t invBoard = ~(masks_[0] | masks_[1]);
+  return ((invBoard >> 26) & 1) | ((invBoard >> 18) & 2) |
+         ((invBoard >> 31) & 4) | ((invBoard >> 9) & 8) |
+         ((invBoard >> 36) & 16) | (invBoard & 32) | ((invBoard >> 41) & 64);
+}
+
+std::array<size_t, 2> Board::getThreatCount() const {
+  std::array<size_t, 2> threatCount{{0, 0}};
   uint64_t board = masks_[0] | masks_[1];
 
   // For each column, cheack each empty spaces from the top down for threats
@@ -73,26 +100,26 @@ array<size_t, 2> Board::getThreatCount() const {
       if ((board >> bit) & 1) {
         break;
       }
-      threatCount[0] += isWon(masks_[0] | (1L << bit));
-      threatCount[1] += isWon(masks_[1] | (1L << bit));
+      threatCount[0] += isWon(masks_[0] | (1UL << bit));
+      threatCount[1] += isWon(masks_[1] | (1UL << bit));
     }
   }
   return threatCount;
 }
 
-ostream &Board::print(ostream &os) const {
+std::ostream &Board::print(std::ostream &os) const {
   const char chars[3] = {'.', 'X', 'O'};
 
   // Iterate through the board row by row left to right top to bottom
   size_t bit = 5;
   while (bit != 49) {
     os << chars[((masks_[0] >> bit) & 1) + 2 * ((masks_[1] >> bit) & 1)] << " ";
-    if (bit > 41) os << endl;
+    if (bit > 41) os << std::endl;
     bit = (bit + 7) % 50;
   }
 
   // Print column indices along the bottom
-  os << "0 1 2 3 4 5 6" << endl;
+  os << "0 1 2 3 4 5 6" << std::endl;
 
   return os;
 }
@@ -121,11 +148,13 @@ void Board::handleMove(size_t move) {
   }
 
   // Place a piece at bit in the correct mask and toggle turn_
-  masks_[turn_] |= (1L << bit);
+  masks_[turn_] |= (1UL << bit);
   turn_ = !turn_;
 }
 
-ostream &operator<<(ostream &os, const Board &board) { return board.print(os); }
+std::ostream &operator<<(std::ostream &os, const Board &board) {
+  return board.print(os);
+}
 
 // Source: Fhourstones Benchmark by John Tromp
 // https://github.com/qu1j0t3/fhourstones
@@ -155,4 +184,9 @@ size_t Board::isWon(uint64_t mask) {
   }
 
   return 0;
+}
+
+size_t BoardHasher::operator()(const Board &b) const {
+  // Shift mask_[1] left by 16 bits so the top board bit becomes the MSB
+  return b.masks_[0] ^ (b.masks_[1] << 16);
 }
