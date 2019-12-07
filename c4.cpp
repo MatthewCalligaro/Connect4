@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
 #include "agent-benchmark.hpp"
 #include "agent-human.hpp"
 #include "agent-minimax.hpp"
@@ -13,8 +14,14 @@
 #include "mc-train.hpp"
 #include "sarsa-train.hpp"
 
+using std::vector;
+using std::cout;
+using std::endl;
+using std::make_shared;
+using std::shared_ptr;
+
 void singleGame() {
-  std::shared_ptr<Agent> ax = std::make_shared<AgentBenchmark>(4, 0, 0);
+  std::shared_ptr<Agent> ax = std::make_shared<AgentBenchmark>(4, 0);
   std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(12, 0.01);
   Game game(ax, ao, 2000);
 
@@ -38,35 +45,7 @@ void singleGame() {
       std::cout << "Draw" << std::endl;
       break;
   }
-  for (size_t i = 0; i < half; i++) {
-    vector<double> theta_1 = LSARSA_1.sarsaTrain();
-    shared_ptr<Agent> a1 = make_shared<AgentMinimaxSARSA>(theta_1);
-    shared_ptr<Agent> a2 = make_shared<AgentMinimax>();
-    Game game(a2, a1);
-
-    cout << a2->getAgentName() << " vs. " << a1->getAgentName() << endl;
-    size_t winner = game.execute();
-
-    cout << "----------------------------------------------------------------"
-         << endl
-         << "Final Board:" << endl;
-    game.printBoard(cout);
-
-    switch (winner) {
-      case 0:
-        cout << a2->getAgentName() << " (X Player) won" << endl;
-        break;
-      case 1:
-        cout << a1->getAgentName() << " (O Player) won" << endl;
-        WinsAndDraws += 1;
-        break;
-      case 2:
-        cout << "Draw" << endl;
-        WinsAndDraws += 1;
-        break;
-    }
-  }
-  cout << "Wins and Draws: " << WinsAndDraws << "/" << half * 2 << endl;
+  
 }
 
 void LSARSA() {
@@ -101,6 +80,7 @@ void LSARSA() {
         WinsAndDraws += 1;
         break;
     }
+  }
     for (size_t i = 0; i < half; i++) {
     vector<double> theta_1 = LSARSA_1.sarsaTrain();
     shared_ptr<Agent> a1 = make_shared<AgentMinimaxSARSA>(theta_1);
@@ -216,7 +196,7 @@ void trials() {
 
   // Execute games
   for (size_t i = 0; i < NUM_TRIALS; ++i) {
-    ax = std::make_shared<AgentBenchmark>(4, 0, 0);
+    ax = std::make_shared<AgentBenchmark>(4, 0);
     ao = std::make_shared<AgentMinimax>(DEPTH, 0.01);
 
     Game game(ax, ao, TIME_LIMIT);

@@ -8,6 +8,8 @@
 #include <string>
 #include "board.hpp"
 
+using std::vector;
+
 class LSARSATrain {
  public:
   LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES);

@@ -5,6 +5,8 @@
 #include <ostream>
 #include <vector>
 
+using std::vector;
+
 size_t const Board::MOVE_ORDER[7] = {3, 2, 4, 1, 5, 0, 6};
 
 Board::Board() : masks_{0, 0}, turn_{0} {}

@@ -13,6 +13,8 @@
 
 using std::cout;
 using std::endl;
+using std::vector;
+using std::array;
 
 MonteCarloTrain::MonteCarloTrain(size_t turn, size_t NUM_EPISODES)
     : NUM_EPISODES{NUM_EPISODES}, trainingFor{turn} {};

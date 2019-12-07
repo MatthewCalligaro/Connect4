@@ -12,6 +12,8 @@
 
 using std::cout;
 using std::endl;
+using std::vector;
+using std::array;
 
 LSARSATrain::LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES)
     : NUM_EPISODES{NUM_EPISODES}, trainingFor{turn}, isQ{isQ} {};

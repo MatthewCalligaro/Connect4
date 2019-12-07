@@ -8,6 +8,8 @@
 #include <ostream>
 #include <vector>
 
+using std::vector;
+
 // Bitboard encoding
 // .  .  .  .  .  .  .  TOP
 // 5 12 19 26 33 40 47

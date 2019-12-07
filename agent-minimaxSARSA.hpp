@@ -7,12 +7,15 @@
 #include <vector>
 #include "agent.hpp"
 
+using std::vector;
+
 class AgentMinimaxSARSA : public Agent {
  public:
   explicit AgentMinimaxSARSA(vector<double> theta);
   AgentMinimaxSARSA(size_t firstDepth, float discount, float threatWeight,
                     vector<double> theta);
-  void getMove(const Board &board, size_t &move) override;
+  void getMove(const Board &board, size_t &move,
+               const std::chrono::system_clock::time_point &endTime) override;
   std::string getAgentName() const override;
 
  private:

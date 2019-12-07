@@ -11,7 +11,8 @@
 class AgentSARSA : public Agent {
  public:
   explicit AgentSARSA(vector<double> theta);
-  void getMove(const Board &board, size_t &move) override;
+  void getMove(const Board &board, size_t &move, 
+                const std::chrono::system_clock::time_point &endTime) override;
   std::string getAgentName() const override;
   vector<double> theta;
 };
