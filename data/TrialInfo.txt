@@ -1,6 +1,6 @@
-Date: 11/25/2019
+Date: 12/8/2019
 Collected by: Matthew Calligaro
-Purpose: Gather empiricle data on minimax speeds
+Purpose: Gather empirical data on minimax speeds
 
 All trials used:
 X agent (benchmark): Minimax with 4 deep and null heuristic
