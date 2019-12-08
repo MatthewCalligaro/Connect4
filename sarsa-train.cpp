@@ -1,6 +1,7 @@
 // Copyright 2019 Aditya Khant
 #include "sarsa-train.hpp"
 #include <time.h>
+#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <random>
@@ -8,12 +9,11 @@
 #include <string>
 #include <tuple>
 #include <vector>
-#include <algorithm>
 
+using std::array;
 using std::cout;
 using std::endl;
 using std::vector;
-using std::array;
 
 LSARSATrain::LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES)
     : NUM_EPISODES{NUM_EPISODES}, trainingFor{turn}, isQ{isQ} {};

@@ -1,6 +1,7 @@
 // Copyright 2019 Aditya Khant
 #include "mc-train.hpp"
 #include <time.h>
+#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <map>
@@ -9,12 +10,11 @@
 #include <string>
 #include <tuple>
 #include <vector>
-#include <algorithm>
 
+using std::array;
 using std::cout;
 using std::endl;
 using std::vector;
-using std::array;
 
 MonteCarloTrain::MonteCarloTrain(size_t turn, size_t NUM_EPISODES)
     : NUM_EPISODES{NUM_EPISODES}, trainingFor{turn} {};

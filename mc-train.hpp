@@ -3,9 +3,9 @@
 #ifndef MC_TRAIN_HPP_
 #define MC_TRAIN_HPP_
 
+#include <string>
 #include <tuple>
 #include <vector>
-#include <string>
 #include "board.hpp"
 
 class MonteCarloTrain {
@@ -22,7 +22,8 @@ class MonteCarloTrain {
   std::vector<double> mcTrain();
   static std::tuple<size_t, double> getAction(Board board,
                                               std::vector<double> theta);
-  std::tuple<size_t, double> getEGreedyAction(Board board, std::vector<double> theta,
+  std::tuple<size_t, double> getEGreedyAction(Board board,
+                                              std::vector<double> theta,
                                               double epsilon, bool q);
   double reward(Board board);
 

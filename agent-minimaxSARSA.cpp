@@ -21,8 +21,9 @@ AgentMinimaxSARSA::AgentMinimaxSARSA(size_t firstDepth, float discount,
       threatWeight_{threatWeight},
       theta{theta} {}
 
-void AgentMinimaxSARSA::getMove(const Board &board, size_t &move, 
-                        const std::chrono::system_clock::time_point &endTime) {
+void AgentMinimaxSARSA::getMove(
+    const Board &board, size_t &move,
+    const std::chrono::system_clock::time_point &endTime) {
   size_t turn = board.getTurn();
   size_t depth = firstDepth_;
   vector<size_t> moves = board.getSuccessors();

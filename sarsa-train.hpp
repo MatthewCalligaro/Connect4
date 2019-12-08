@@ -3,9 +3,9 @@
 #ifndef SARSA_TRAIN_HPP_
 #define SARSA_TRAIN_HPP_
 
+#include <string>
 #include <tuple>
 #include <vector>
-#include <string>
 #include "board.hpp"
 
 using std::vector;
