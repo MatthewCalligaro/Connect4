@@ -8,6 +8,7 @@
 #include <vector>
 #include "agent-benchmark.hpp"
 #include "agent-human.hpp"
+#include "agent-mcts.hpp"
 #include "agent-minimax.hpp"
 #include "agent-minimaxSARSA.hpp"
 #include "agent-null.hpp"
@@ -269,9 +270,74 @@ void timeTrials(size_t minDepth, size_t maxDepth, std::string tag,
   }
 }
 
+void winTrials(bool verbose=false) {
+  const size_t NUM_TRIALS = 25;
+  const size_t TIME_LIMIT = 2000;
+
+  size_t xStats[3] = {0, 0, 0};
+  for (size_t i = 0; i < NUM_TRIALS; ++i) {
+    // TODO: Take these as parameters
+    std::shared_ptr<Agent> ax = std::make_shared<AgentMCTS>();
+    std::shared_ptr<Agent> ao = std::make_shared<AgentBenchmark>(4, false);
+
+    Game game(ax, ao, TIME_LIMIT);
+    size_t winner = game.execute();
+    ++xStats[winner];
+
+    if (verbose) {
+      std::cout << "Trial " << i + 1 << ": ";
+      switch (winner) {
+        case 0:
+          std::cout << ax->getAgentName() << " (X Player) won" << std::endl;
+          break;
+        case 1:
+          std::cout << ao->getAgentName() << " (O Player) won" << std::endl;
+          break;
+        case 2:
+          std::cout << "Draw" << std::endl;
+          break;
+      }
+    }
+  }
+
+  size_t oStats[3] = {0, 0, 0};
+  for (size_t i = 0; i < NUM_TRIALS; ++i) {
+    // TODO: Take these as parameters
+    std::shared_ptr<Agent> ao = std::make_shared<AgentMCTS>();
+    std::shared_ptr<Agent> ax = std::make_shared<AgentBenchmark>(4, false);
+
+    Game game(ax, ao, TIME_LIMIT);
+    size_t winner = game.execute();
+    ++oStats[winner];
+
+    if (verbose) {
+      std::cout << "Trial " << i + 1 << ": ";
+      switch (winner) {
+        case 0:
+          std::cout << ax->getAgentName() << " (X Player) won" << std::endl;
+          break;
+        case 1:
+          std::cout << ao->getAgentName() << " (O Player) won" << std::endl;
+          break;
+        case 2:
+          std::cout << "Draw" << std::endl;
+          break;
+      }
+    }
+  }
+
+  std::cout << "X wins: " << xStats[0] << std::endl;
+  std::cout << "X loses: " << xStats[1] << std::endl;
+  std::cout << "X draws: " << xStats[2] << std::endl;
+  std::cout << "O wins: " << oStats[1] << std::endl;
+  std::cout << "O loses: " << oStats[0] << std::endl;
+  std::cout << "O draws: " << oStats[2] << std::endl;
+}
+
 int main() {
   // singleGame();
-  timeTrials(1, 12, "none", false);
+  winTrials(true);
+  // timeTrials(1, 12, "none", false);
   // LSARSA();
   // MC();
 }
