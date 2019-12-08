@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 #include "agent-benchmark.hpp"
@@ -14,11 +15,11 @@
 #include "mc-train.hpp"
 #include "sarsa-train.hpp"
 
-using std::vector;
 using std::cout;
 using std::endl;
 using std::make_shared;
 using std::shared_ptr;
+using std::vector;
 
 void singleGame() {
   std::shared_ptr<Agent> ax = std::make_shared<AgentBenchmark>(4, 0);
@@ -45,7 +46,6 @@ void singleGame() {
       std::cout << "Draw" << std::endl;
       break;
   }
-  
 }
 
 void LSARSA() {
@@ -81,7 +81,7 @@ void LSARSA() {
         break;
     }
   }
-    for (size_t i = 0; i < half; i++) {
+  for (size_t i = 0; i < half; i++) {
     vector<double> theta_1 = LSARSA_1.sarsaTrain();
     shared_ptr<Agent> a1 = make_shared<AgentMinimaxSARSA>(theta_1);
     shared_ptr<Agent> a2 = make_shared<AgentMinimax>();
@@ -111,7 +111,6 @@ void LSARSA() {
   }
   cout << "Wins and Draws: " << WinsAndDraws << "/" << half * 2 << endl;
 }
-
 
 void MC() {
   MonteCarloTrain LSARSA_0 = MonteCarloTrain(0, 100000);
@@ -177,71 +176,102 @@ void MC() {
   cout << "Wins and Draws: " << WinsAndDraws << "/" << half * 2 << endl;
 }
 
-
-void trials() {
-  const size_t NUM_TRIALS = 10;
-  const size_t DEPTH = 9;
+void timeTrials(size_t minDepth, size_t maxDepth, std::string tag,
+                bool verbose = false) {
+  const size_t NUM_TRIALS = 25;
   const size_t TIME_LIMIT = 10000;
-  std::ofstream file("data/9deep-Memo.csv");
 
-  std::shared_ptr<Agent> ax;
-  std::shared_ptr<Agent> ao;
+  // Dummy array to store X (benchmark agent) move times
+  std::array<double, 42> xTimes;
 
-  std::array<double, 42> trials[NUM_TRIALS * 2];
-  for (size_t i = 0; i < NUM_TRIALS * 2; ++i) {
-    for (double& move : trials[i]) {
-      move = 0;
-    }
-  }
+  for (size_t depth = minDepth; depth <= maxDepth; ++depth) {
+    // Open a csv file for output
+    std::stringstream filename;
+    filename << "data/" << depth << "-" << tag << ".csv";
+    std::ofstream file(filename.str());
 
-  // Execute games
-  for (size_t i = 0; i < NUM_TRIALS; ++i) {
-    ax = std::make_shared<AgentBenchmark>(4, 0);
-    ao = std::make_shared<AgentMinimax>(DEPTH, 0.01);
-
-    Game game(ax, ao, TIME_LIMIT);
-    size_t winner = game.execute(trials[i], trials[i + NUM_TRIALS]);
-
-    std::cout << "Trial " << i + 1 << ": ";
-    switch (winner) {
-      case 0:
-        std::cout << ax->getAgentName() << " (X Player) won" << std::endl;
-        break;
-      case 1:
-        std::cout << ao->getAgentName() << " (O Player) won" << std::endl;
-        break;
-      case 2:
-        std::cout << "Draw" << std::endl;
-        break;
-    }
-  }
-
-  // Create CSV header
-  file << ax->getAgentName() << " Trial 1,";
-  for (size_t i = 2; i <= NUM_TRIALS; ++i) {
-    file << "Trial " << i << ",";
-  }
-  file << ao->getAgentName() << " Trial 1,";
-  for (size_t i = 2; i <= NUM_TRIALS; ++i) {
-    file << "Trial " << i << ",";
-  }
-  file << std::endl;
-
-  // Fill CSV with data
-  for (size_t r = 0; r < 42; ++r) {
-    for (size_t trial = 0; trial < NUM_TRIALS * 2; ++trial) {
-      if (trials[trial][r] > 0) {
-        file << trials[trial][r];
+    // Initialize array to store O move times
+    std::array<double, 42> trials[NUM_TRIALS];
+    for (size_t i = 0; i < NUM_TRIALS; ++i) {
+      for (double& move : trials[i]) {
+        move = 0;
       }
-      file << ",";
     }
-    file << std::endl;
+
+    if (verbose) {
+      std::cout << ">> Depth " << depth << std::endl;
+    }
+
+    // Execute one game for each trial
+    for (size_t i = 0; i < NUM_TRIALS; ++i) {
+      std::shared_ptr<Agent> ax = std::make_shared<AgentBenchmark>(4, false);
+      std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(depth, 0.01);
+
+      Game game(ax, ao, TIME_LIMIT);
+      size_t winner = game.execute(xTimes, trials[i]);
+
+      if (verbose) {
+        std::cout << "Trial " << i + 1 << ": ";
+        switch (winner) {
+          case 0:
+            std::cout << ax->getAgentName() << " (X Player) won" << std::endl;
+            break;
+          case 1:
+            std::cout << ao->getAgentName() << " (O Player) won" << std::endl;
+            break;
+          case 2:
+            std::cout << "Draw" << std::endl;
+            break;
+        }
+      }
+    }
+
+    // Create CSV header
+    for (size_t i = 1; i <= NUM_TRIALS; ++i) {
+      file << "Trial " << i << ",";
+    }
+    file << "Average" << std::endl;
+
+    // Fill CSV with data
+    double averageSum = 0;
+    size_t averageCount = 0;
+    double first5Sum = 0;
+    for (size_t r = 0; r < 42; ++r) {
+      double sum = 0;
+      size_t count = 0;
+
+      // Write each move time for move r
+      for (size_t trial = 0; trial < NUM_TRIALS; ++trial) {
+        if (trials[trial][r] > 0) {
+          file << trials[trial][r];
+          sum += trials[trial][r];
+          ++count;
+        }
+        file << ",";
+      }
+
+      if (count == 0) {
+        break;
+      }
+
+      // Write average move time for move r
+      file << sum / count << std::endl;
+      averageSum += sum / count;
+      ++averageCount;
+      if (r < 5) {
+        first5Sum += sum / count;
+      }
+    }
+
+    // Write and print overall averages (all moves, first 5 moves)
+    file << averageSum / averageCount << "," << first5Sum / 5 << std::endl;
+    std::cout << first5Sum / 5 << std::endl;
   }
 }
 
 int main() {
-  singleGame();
-  // trials();
+  // singleGame();
+  timeTrials(1, 12, "none", false);
   // LSARSA();
   // MC();
 }
