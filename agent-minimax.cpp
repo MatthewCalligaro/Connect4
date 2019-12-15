@@ -157,5 +157,6 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
 
 float AgentMinimax::heuristic(const Board &board) {
   std::array<size_t, 2> threatCount = board.getThreatCount();
-  return threatCount[0] * threatWeight_ - threatCount[1] * threatWeight_;
+  return threatCount[0] * threatCount[0] * threatWeight_ -
+         threatCount[1] * threatCount[1] * threatWeight_;
 }
