@@ -24,7 +24,7 @@ using std::vector;
 
 void singleGame() {
   std::shared_ptr<Agent> ax = std::make_shared<AgentBenchmark>(4, 0);
-  std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(12, 0.01);
+  std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(12, 0.001);
   Game game(ax, ao, 2000);
 
   std::cout << ax->getAgentName() << " vs. " << ao->getAgentName() << std::endl;
@@ -206,7 +206,7 @@ void timeTrials(size_t minDepth, size_t maxDepth, std::string tag,
     // Execute one game for each trial
     for (size_t i = 0; i < NUM_TRIALS; ++i) {
       std::shared_ptr<Agent> ax = std::make_shared<AgentBenchmark>(4, false);
-      std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(depth, 0.01);
+      std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(depth, 0.001);
 
       Game game(ax, ao, TIME_LIMIT);
       size_t winner = game.execute(xTimes, trials[i]);
@@ -270,7 +270,7 @@ void timeTrials(size_t minDepth, size_t maxDepth, std::string tag,
   }
 }
 
-void winTrials(bool verbose=false) {
+void winTrials(bool verbose = false) {
   const size_t NUM_TRIALS = 25;
   const size_t TIME_LIMIT = 2000;
 
@@ -334,9 +334,74 @@ void winTrials(bool verbose=false) {
   std::cout << "O draws: " << oStats[2] << std::endl;
 }
 
+void pairwiseDepthTrials(size_t startDepth, size_t endDepth,
+                         float threatWeight) {
+  const size_t TIME_LIMIT = 2000;
+
+  // Create CSV and CSV header
+  std::ofstream file("data/pairwiseDepthTrials.csv");
+  file << "O depth of:,";
+  for (size_t oDepth = startDepth; oDepth <= endDepth; ++oDepth) {
+    file << oDepth << ",";
+  }
+  file << "X win sum" << std::endl;
+
+  // Create arrays to store sum of wins as X and O for each depth
+  int* xSums = new int[endDepth - startDepth + 1];
+  int* oSums = new int[endDepth - startDepth + 1];
+  for (size_t i = 0; i <= endDepth - startDepth; ++i) {
+    xSums[i] = 0;
+    oSums[i] = 0;
+  }
+
+  // Perform all pairwise games
+  for (size_t xDepth = startDepth; xDepth <= endDepth; ++xDepth) {
+    file << "X depth of " << xDepth << ",";
+    for (size_t oDepth = startDepth; oDepth <= endDepth; ++oDepth) {
+      std::shared_ptr<Agent> ax =
+          std::make_shared<AgentMinimax>(xDepth, threatWeight);
+      std::shared_ptr<Agent> ao =
+          std::make_shared<AgentMinimax>(oDepth, threatWeight);
+      Game game(ax, ao, TIME_LIMIT);
+      int winner = game.execute();
+
+      switch (winner) {
+        case 0:
+          winner = 1;
+          break;
+        case 1:
+          winner = -1;
+          break;
+        case 2:
+          winner = 0;
+          break;
+      }
+
+      xSums[xDepth - startDepth] += winner;
+      oSums[oDepth - startDepth] += -winner;
+      file << winner << ",";
+    }
+    file << xSums[xDepth - startDepth] << std::endl;
+  }
+
+  // Print Sums
+  file << "O win sum,";
+  for (size_t i = 0; i <= endDepth - startDepth; ++i) {
+    file << oSums[i] << ",";
+  }
+  file << std::endl << "Total win sum:,";
+  for (size_t i = 0; i <= endDepth - startDepth; ++i) {
+    file << xSums[i] + oSums[i] << ",";
+  }
+  file << std::endl;
+  delete[] xSums;
+  delete[] oSums;
+}
+
 int main() {
   // singleGame();
-  winTrials(true);
+  // winTrials(true);
+  pairwiseDepthTrials(1, 12, 0.001);
   // timeTrials(1, 12, "none", false);
   // LSARSA();
   // MC();
