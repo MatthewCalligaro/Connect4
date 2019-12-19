@@ -1,4 +1,9 @@
-// Copyright 2019 Matthew Calligaro
+/**
+ * \file board.cpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements the Board class
+ */
 
 #include "board.hpp"
 #include <array>

@@ -1,9 +1,13 @@
-// Copyright 2019 Matthew Calligaro
+/**
+ * \file agent-minimax.hpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements the AgentMinimax class
+ */
 
 #define AB_PRUNING 1
 #define MEMOIZE 1
 #define ITERATIVE_DEEPENING 0
-#define PRECOMPUTED 0
 
 #include "agent-minimax.hpp"
 #include <algorithm>
@@ -12,18 +16,9 @@
 #include <string>
 #include <vector>
 
-#if PRECOMPUTED
-#include "precomputed-values.hpp"
-#endif
+AgentMinimax::AgentMinimax() : AgentMinimax(12) {}
 
-AgentMinimax::AgentMinimax() : AgentMinimax(12, 0.01) {}
-
-AgentMinimax::AgentMinimax(size_t firstDepth, float threatWeight)
-    : firstDepth_{firstDepth}, threatWeight_{threatWeight} {
-#if PRECOMPUTED
-  memo_ = precomp;
-#endif
-}
+AgentMinimax::AgentMinimax(size_t firstDepth) : firstDepth_{firstDepth} {}
 
 void AgentMinimax::getMove(
     const Board &board, size_t &move,
@@ -157,6 +152,6 @@ float AgentMinimax::minimax(Board board, size_t depth, float alpha,
 
 float AgentMinimax::heuristic(const Board &board) {
   std::array<size_t, 2> threatCount = board.getThreatCount();
-  return threatCount[0] * threatCount[0] * threatWeight_ -
-         threatCount[1] * threatCount[1] * threatWeight_;
+  return threatCount[0] * threatCount[0] * THREAT_WEIGHT -
+         threatCount[1] * threatCount[1] * THREAT_WEIGHT;
 }

@@ -1,4 +1,9 @@
-// Copyright 2019 Matthew Calligaro
+/**
+ * \file agent-mcts.cpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements the AgentMCTS class
+ */
 
 #include "agent-mcts.hpp"
 #include <algorithm>
@@ -7,7 +12,11 @@
 #include <string>
 #include <vector>
 
-AgentBenchmark AgentMCTS::RAND_AGENT(3, true);
+/*******************************************************************************
+ * AgentMCTS Implementation
+ ******************************************************************************/
+
+AgentBenchmark AgentMCTS::ROLLOUT_AGENT(3, true);
 
 void AgentMCTS::getMove(const Board& board, size_t& move,
                         const std::chrono::system_clock::time_point& endTime) {
@@ -54,7 +63,7 @@ float AgentMCTS::Node::uct(size_t parentN) const {
          C * sqrt(std::log(parentN) / n_);
 }
 
-bool AgentMCTS::Node::fullyExplored() const { return unvisited_.size() == 0; }
+bool AgentMCTS::Node::isFullyExplored() const { return unvisited_.size() == 0; }
 
 size_t AgentMCTS::Node::bestUCTChild() const {
   size_t bestChild;
@@ -73,7 +82,7 @@ size_t AgentMCTS::Node::bestUCTChild() const {
 float AgentMCTS::Node::traverse() {
   float reward = 0;
 
-  if (fullyExplored()) {
+  if (isFullyExplored()) {
     if (numChildren_ == 0) {
       // If node is terminal, use its reward
       reward = board_.getReward();
@@ -106,8 +115,8 @@ float AgentMCTS::Node::rollout() {
 
   size_t move;
   while (!(curBoard.isWon() || curBoard.isDraw())) {
-    RAND_AGENT.getMove(curBoard, move,
-                       std::chrono::system_clock::time_point::max());
+    ROLLOUT_AGENT.getMove(curBoard, move,
+                          std::chrono::system_clock::time_point::max());
     curBoard.handleMove(move);
   }
 

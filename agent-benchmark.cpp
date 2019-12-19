@@ -1,4 +1,9 @@
-// Copyright 2019 Matthew Calligaro
+/**
+ * \file agent-benchmark.cpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements the AgentBenchmark class
+ */
 
 #include "agent-benchmark.hpp"
 #include <algorithm>
@@ -11,7 +16,7 @@
 AgentBenchmark::AgentBenchmark() : AgentBenchmark(4, false) {}
 
 AgentBenchmark::AgentBenchmark(size_t depth, bool random)
-    : AgentMinimax(depth, 0),
+    : AgentMinimax(depth),
       random_{random},
       generator_(std::random_device()()) {}
 
@@ -66,6 +71,7 @@ float AgentBenchmark::heuristic(const Board &board) {
   if (random_) {
     return dist(generator_);
   }
+
   return 0;
 }
 

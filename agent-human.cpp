@@ -1,4 +1,9 @@
-// Copyright 2019 Matthew Calligaro
+/**
+ * \file agent-human.cpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements the AgentHuman class
+ */
 
 #include "agent-human.hpp"
 #include <iostream>
@@ -13,7 +18,6 @@ void AgentHuman::getMove(const Board &board, size_t &move,
   size_t userMove;
   std::cin >> userMove;
 
-  // TODO(MatthewCalligaro): Handle non-numerical inputs
   while (!board.isValidMove(userMove)) {
     std::cout << "That is not a valid move.  Please try again: ";
     std::cin >> userMove;

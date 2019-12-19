@@ -1,4 +1,9 @@
-// Copyright 2019 Matthew Calligaro
+/**
+ * \file game.cpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements the Game class
+ */
 
 #include "game.hpp"
 #include <chrono>

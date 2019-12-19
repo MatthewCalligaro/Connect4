@@ -1,4 +1,9 @@
-// Copyright 2019 Matthew Calligaro
+/**
+ * \file precomputed-values.cpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements a HashTable of precomputed 8-ply minimax values
+ */
 
 #include "precomputed-values.hpp"
 #include <unordered_map>

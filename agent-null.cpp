@@ -1,4 +1,9 @@
-// Copyright 2019 Matthew Calligaro
+/**
+ * \file agent-null.cpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements the AgentNull class
+ */
 
 #include "agent-null.hpp"
 #include <string>
