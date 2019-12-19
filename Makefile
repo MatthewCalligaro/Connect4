@@ -87,4 +87,4 @@ auto-format:
 	clang-format --style=file -i *.*pp
 
 clean:
-	rm -rf *.o $(TARGET)
+	rm -rf *.o $(TARGET) documentation
