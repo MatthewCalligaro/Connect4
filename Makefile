@@ -5,7 +5,7 @@
 ################################################################################
 
 CXX = clang++
-CXXFLAGS = -O3 -std=c++1z -Wall -Wextra -pedantic -g
+CXXFLAGS = -O3 -std=c++1z -Wall -Wextra -Wno-unused-parameter -pedantic -g
 TARGET = c4
 LIBRARIES = -lpthread
 
