@@ -30,7 +30,7 @@ void printUsage() {
 /**
  * \brief Parses command line arguments and executes the selected test
  */
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   std::string testType = "single";
   size_t numTrials = 1;
   bool verbose = false;

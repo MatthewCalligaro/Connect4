@@ -64,9 +64,9 @@ void Test::timeTrials(size_t numTrials, size_t minDepth, size_t maxDepth,
     std::ofstream file(filename.str());
 
     // Initialize array to store O move times
-    std::array<double, 42>* trials = new std::array<double, 42>[numTrials];
+    std::array<double, 42> *trials = new std::array<double, 42>[numTrials];
     for (size_t i = 0; i < numTrials; ++i) {
-      for (double& move : trials[i]) {
+      for (double &move : trials[i]) {
         move = 0;
       }
     }
@@ -217,8 +217,8 @@ void Test::pairwiseDepthTrials(size_t minDepth, size_t maxDepth) {
   file << "X win sum" << std::endl;
 
   // Create arrays to store sum of wins as X and O for each depth
-  int* xSums = new int[maxDepth - minDepth + 1];
-  int* oSums = new int[maxDepth - minDepth + 1];
+  int *xSums = new int[maxDepth - minDepth + 1];
+  int *oSums = new int[maxDepth - minDepth + 1];
   for (size_t i = 0; i <= maxDepth - minDepth; ++i) {
     xSums[i] = 0;
     oSums[i] = 0;
