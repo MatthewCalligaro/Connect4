@@ -107,16 +107,17 @@ std::ostream &Game::printBoard(std::ostream &os) const {
 }
 
 size_t Game::getMove(size_t agent) {
-  std::shared_ptr<size_t> move(new size_t(NO_MOVE));
+  std::shared_ptr<size_t> agentMove(new size_t(NO_MOVE));
   std::chrono::system_clock::time_point endTime =
       std::chrono::system_clock::now() + std::chrono::milliseconds(turnTime_);
 
   // Run the agent's getMove function (via threadHelper) until at most endTime
   // and grab the value currently stored in move
-  std::future<void> threadFuture = async(std::launch::async, threadHelper,
-                                         agents_[agent], board_, move, endTime);
+  std::future<void> threadFuture =
+      async(std::launch::async, threadHelper, agents_[agent], board_, agentMove,
+            endTime);
   threadFuture.wait_until(endTime);
-  size_t output = *move;
+  size_t output = *agentMove;
 
   // For thread safety, wait until the agent finishes deciding its move
   // before returning, but return the value grabbed at endTime
