@@ -77,7 +77,7 @@ test.o: test.cpp test.hpp agents/agent-benchmark.hpp agents/agent-human.hpp \
 ################################################################################
 
 doxygen:
-	doxygen config/doxygen.config
+	doxygen doxygen.config
 
 lint:
 	-cpplint *.*pp
