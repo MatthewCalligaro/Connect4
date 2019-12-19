@@ -37,27 +37,6 @@ vector<size_t> MonteCarloTrain::extractFeatures(Board board) {
     }
   }
 
-  // size_t scoreSelf = 0;
-  // size_t scoreOpp = 0;
-  // vector<char> boardVector = board.getBoardVector();
-  // for (size_t i = 0; i < 6; ++i){
-  //     size_t piece = getPiece(i, 3, boardVector);
-  //     if (piece < 2){
-  //         if (piece == board.getTurn()){
-  //           ++scoreSelf;
-  //         } else {
-  //           ++scoreOpp;
-  //         }
-  //     }
-  // }
-  // score = scoreSelf*4 + scoreOpp;
-  // for (size_t i = 9; i<25; ++i){
-  //   if (i - 9 == score){
-  //     output[i] = 1;
-  //   } else {
-  //     output[i] = 0;
-  //   }
-  // }
 
   return output;
 }
@@ -116,21 +95,11 @@ vector<double> MonteCarloTrain::mcTrain(Board board) {
   std::default_random_engine re;
   re.seed((unsigned)time(NULL));
   for (size_t i = 0; i < VECTOR_SIZE; ++i) {
-    // double a_random_double = unif(re);
-    // theta[i] = a_random_double;
     theta[i] = 0;
     counts[i] = 0;
   }
-  // std::ostringstream oss2;
-  // std::copy(theta.begin(), theta.end()-1,
-  //       std::ostream_iterator<float>(oss2, ","));
-  // oss2 << theta.back();
-  // std::cout << oss2.str() << std::endl <<std::endl;
-
   for (size_t episode = 0; episode < NUM_EPISODES; ++episode) {
-    // if (episode % 1000000 == 0){
-    //   cout << "Training episode " << episode << endl;
-    // }
+
     std::tuple<size_t, double> actionTup =
         getEGreedyAction(boardCopy, theta, EPSILON, true);
     size_t action = std::get<0>(actionTup);

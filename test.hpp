@@ -32,10 +32,21 @@ class Test {
                          std::string tag, bool verbose = false);
 
   /**
-   * \brief Play sever games between two agents as both X and O
+   * \brief Play several games between two agents as both X and O
    * \param verbose   Print extra information as the trials complete
    */
   static void winTrials(size_t numTrials, bool verbose = false);
+
+  /**
+   * \brief Play several games between two agents as both X and O using Linear Q
+   * \param verbose   Print extra information as the trials complete
+   */
+  static void winTrialsQ(size_t numTrials, bool verbose, size_t depth);
+    /**
+   * \brief Play several games between two agents as both X and O using Linear Q
+   * \param verbose   Print extra information as the trials complete
+   */
+  static void winTrialsMC(size_t numTrials, bool verbose, size_t depth);
 
   /**
    * \brief Play all pairwise games between minimax agents of a range of depths

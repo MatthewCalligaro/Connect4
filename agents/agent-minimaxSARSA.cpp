@@ -11,8 +11,8 @@
 using std::array;
 using std::vector;
 
-AgentMinimaxSARSA::AgentMinimaxSARSA(vector<double> theta)
-    : AgentMinimaxSARSA(4, 0.99, 0.01, theta) {}
+AgentMinimaxSARSA::AgentMinimaxSARSA(size_t depth, vector<double> theta)
+    : AgentMinimaxSARSA(depth, 0.99, 0.01, theta) {}
 
 AgentMinimaxSARSA::AgentMinimaxSARSA(size_t firstDepth, float discount,
                                      float threatWeight, vector<double> theta)
@@ -105,6 +105,5 @@ float AgentMinimaxSARSA::minimax(Board board, size_t depth, float alpha,
 }
 
 float AgentMinimaxSARSA::heuristic(const Board &board) const {
-  // return LSARSATrain::getQValue(board, theta);
   return MonteCarloTrain::getQValue(board, theta);
 }
