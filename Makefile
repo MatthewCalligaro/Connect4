@@ -1,4 +1,3 @@
-
 CXX = clang++
 CXXFLAGS = -O3 -std=c++1z -Wall -Wextra -pedantic -g
 TARGET = c4
@@ -55,6 +54,9 @@ precomputed-values.o: precomputed-values.cpp precomputed-values.hpp board.hpp
 
 sarsa_train.o: sarsa-train.cpp sarsa-train.hpp board.hpp
 	$(CXX) $< -c $(CXXFLAGS)
+
+doxygen:
+	doxygen doxygen.config
 
 lint: 
 	-cpplint *.cpp
