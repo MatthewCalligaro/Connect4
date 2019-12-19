@@ -17,35 +17,36 @@ all: $(TARGET)
 
 $(TARGET): agent-benchmark.o agent-human.o agent-mcts.o agent-minimax.o \
 	agent-minimaxSARSA.o agent-null.o agent-sarsa.o board.o c4.o game.o \
-	mc-train.o precomputed-values.o sarsa-train.o test.o
+	mc-train.o sarsa-train.o test.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBRARIES)
 
 ################################################################################
 # Object Files
 ################################################################################
 
-agent-benchmark.o: agent-benchmark.cpp agent-benchmark.hpp agent-minimax.hpp
+agent-benchmark.o: agents/agent-benchmark.cpp agents/agent-benchmark.hpp \
+	agents/agent-minimax.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
-agent-human.o: agent-human.cpp agent-human.hpp agent.hpp
+agent-human.o: agents/agent-human.cpp agents/agent-human.hpp agents/agent.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
-agent-mcts.o: agent-mcts.cpp agent-mcts.hpp agent.hpp
+agent-mcts.o: agents/agent-mcts.cpp agents/agent-mcts.hpp agents/agent.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
-agent-minimax.o: agent-minimax.cpp agent-minimax.hpp agent.hpp \
-	precomputed-values.hpp
+agent-minimax.o: agents/agent-minimax.cpp agents/agent-minimax.hpp \
+	agents/agent.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
-agent-minimaxSARSA.o: agent-minimaxSARSA.cpp agent-minimaxSARSA.hpp agent.hpp \
-	sarsa-train.hpp board.hpp
+agent-minimaxSARSA.o: agents/agent-minimaxSARSA.cpp \
+	agents/agent-minimaxSARSA.hpp agents/agent.hpp sarsa-train.hpp board.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
-agent-null.o: agent-null.cpp agent-null.hpp agent.hpp
+agent-null.o: agents/agent-null.cpp agents/agent-null.hpp agents/agent.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
-agent-sarsa.o: agent-sarsa.cpp agent-sarsa.hpp agent.hpp sarsa-train.hpp \
-	board.hpp
+agent-sarsa.o: agents/agent-sarsa.cpp agents/agent-sarsa.hpp agents/agent.hpp \
+	sarsa-train.hpp	board.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
 board.o: board.cpp board.hpp
@@ -54,7 +55,7 @@ board.o: board.cpp board.hpp
 c4.o: c4.cpp test.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
-game.o: game.cpp game.hpp agent.hpp board.hpp
+game.o: game.cpp game.hpp agents/agent.hpp board.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
 mc-train.o: mc-train.cpp mc-train.hpp board.hpp
@@ -66,8 +67,9 @@ precomputed-values.o: precomputed-values.cpp precomputed-values.hpp board.hpp
 sarsa_train.o: sarsa-train.cpp sarsa-train.hpp board.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
-test.o: test.cpp test.hpp agent-benchmark.hpp agent-human.hpp agent-mcts.hpp \
-	agent-minimax.hpp agent-minimaxSARSA.hpp agent-null.hpp board.hpp game.hpp
+test.o: test.cpp test.hpp agents/agent-benchmark.hpp agents/agent-human.hpp \
+	agents/agent-mcts.hpp agents/agent-minimax.hpp \
+	agents/agent-minimaxSARSA.hpp agents/agent-null.hpp board.hpp game.hpp
 	$(CXX) $< -c $(CXXFLAGS)
 
 ################################################################################
@@ -75,11 +77,11 @@ test.o: test.cpp test.hpp agent-benchmark.hpp agent-human.hpp agent-mcts.hpp \
 ################################################################################
 
 doxygen:
-	doxygen doxygen.config
+	doxygen config/doxygen.config
 
 lint:
-	-cpplint *.cpp
-	-cpplint *.hpp
+	-cpplint *.*pp
+	-cpplint */*.*pp
 
 auto-format:
 	clang-format --style=file -i *.*pp

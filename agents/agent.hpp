@@ -5,12 +5,12 @@
  * \brief Declares the Agent class
  */
 
-#ifndef AGENT_HPP_
-#define AGENT_HPP_
+#ifndef AGENTS_AGENT_HPP_
+#define AGENTS_AGENT_HPP_
 
 #include <chrono>
 #include <string>
-#include "board.hpp"
+#include "../board.hpp"
 
 /**
  * \class Agent
@@ -37,4 +37,4 @@ class Agent {
   virtual std::string getAgentName() const = 0;
 };
 
-#endif  // AGENT_HPP_
+#endif  // AGENTS_AGENT_HPP_

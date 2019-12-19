@@ -5,8 +5,8 @@
  * \brief Declares the AgentBenchmark class
  */
 
-#ifndef AGENT_BENCHMARK_HPP_
-#define AGENT_BENCHMARK_HPP_
+#ifndef AGENTS_AGENT_BENCHMARK_HPP_
+#define AGENTS_AGENT_BENCHMARK_HPP_
 
 #include <random>
 #include <string>
@@ -43,4 +43,4 @@ class AgentBenchmark : public AgentMinimax {
   float heuristic(const Board &board) override;
 };
 
-#endif  // AGENT_BENCHMARK_HPP_
+#endif  // AGENTS_AGENT_BENCHMARK_HPP_

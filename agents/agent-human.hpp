@@ -5,8 +5,8 @@
  * \brief Declares the AgentHuman class
  */
 
-#ifndef AGENT_HUMAN_HPP_
-#define AGENT_HUMAN_HPP_
+#ifndef AGENTS_AGENT_HUMAN_HPP_
+#define AGENTS_AGENT_HUMAN_HPP_
 
 #include <string>
 #include "agent.hpp"
@@ -22,4 +22,4 @@ class AgentHuman : public Agent {
   std::string getAgentName() const override;
 };
 
-#endif  // AGENT_HUMAN_HPP_
+#endif  // AGENTS_AGENT_HUMAN_HPP_

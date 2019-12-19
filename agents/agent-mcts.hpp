@@ -5,8 +5,8 @@
  * \brief Declaresthe  AgentMCTS class
  */
 
-#ifndef AGENT_MCTS_HPP_
-#define AGENT_MCTS_HPP_
+#ifndef AGENTS_AGENT_MCTS_HPP_
+#define AGENTS_AGENT_MCTS_HPP_
 
 #include <ostream>
 #include <queue>
@@ -138,4 +138,4 @@ class AgentMCTS : public Agent {
   static AgentBenchmark ROLLOUT_AGENT;
 };
 
-#endif  // AGENT_MCTS_HPP_
+#endif  // AGENTS_AGENT_MCTS_HPP_

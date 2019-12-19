@@ -5,8 +5,8 @@
  * \brief Declares the AgentMinimax class
  */
 
-#ifndef AGENT_MINIMAX_HPP_
-#define AGENT_MINIMAX_HPP_
+#ifndef AGENTS_AGENT_MINIMAX_HPP_
+#define AGENTS_AGENT_MINIMAX_HPP_
 
 #include <string>
 #include <unordered_map>
@@ -72,4 +72,4 @@ class AgentMinimax : public Agent {
   virtual float heuristic(const Board &board);
 };
 
-#endif  // AGENT_MINIMAX_HPP_
+#endif  // AGENTS_AGENT_MINIMAX_HPP_

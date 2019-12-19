@@ -4,7 +4,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
-#include "sarsa-train.hpp"
+#include "../sarsa-train.hpp"
 
 AgentSARSA::AgentSARSA(vector<double> theta) : theta{theta} {};
 void AgentSARSA::getMove(const Board &board, size_t &move,

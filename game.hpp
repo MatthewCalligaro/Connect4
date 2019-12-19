@@ -12,7 +12,7 @@
 #include <list>
 #include <memory>
 #include <ostream>
-#include "agent.hpp"
+#include "agents/agent.hpp"
 #include "board.hpp"
 
 class Game {

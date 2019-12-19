@@ -1,12 +1,11 @@
 // Copyright 2019 Aditya Khant
 
-#ifndef AGENT_SARSA_HPP_
-#define AGENT_SARSA_HPP_
+#ifndef AGENTS_AGENT_SARSA_HPP_
+#define AGENTS_AGENT_SARSA_HPP_
 
 #include <string>
 #include <vector>
 #include "agent.hpp"
-#include "sarsa-train.hpp"
 
 class AgentSARSA : public Agent {
  public:
@@ -17,4 +16,4 @@ class AgentSARSA : public Agent {
   vector<double> theta;
 };
 
-#endif  // AGENT_SARSA_HPP_
+#endif  // AGENTS_AGENT_SARSA_HPP_
