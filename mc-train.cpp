@@ -1,4 +1,10 @@
-// Copyright 2019 Aditya Khant
+/**
+ * \file mc-train.cpp
+ * \copyright Aditya Khant
+ * \date December 2019
+ * \brief Implements the MonteCarloTrain class
+ */
+
 #include "mc-train.hpp"
 #include <time.h>
 #include <algorithm>
@@ -179,16 +185,5 @@ std::tuple<size_t, double> MonteCarloTrain::getEGreedyAction(
     return std::make_tuple(pos, qval);
   } else {
     return getAction(board, theta);
-  }
-}
-
-size_t MonteCarloTrain::getPiece(int row, int col, vector<char> boardVec) {
-  char c = boardVec[row * 7 + col];
-  if (c == 'X') {
-    return 0;
-  } else if (c == 'O') {
-    return 1;
-  } else {
-    return 2;
   }
 }

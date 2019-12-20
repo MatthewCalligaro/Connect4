@@ -1,4 +1,10 @@
-// Copyright 2019 Matthew Calligaro
+/**
+ * \file agent-minimaxSARSA.cpp
+ * \copyright Aditya Khant
+ * \date December 2019
+ * \brief Implements the AgentMinimaxSARSA class
+ */
+
 
 #include "agent-minimaxSARSA.hpp"
 #include <algorithm>
@@ -12,13 +18,12 @@ using std::array;
 using std::vector;
 
 AgentMinimaxSARSA::AgentMinimaxSARSA(size_t depth, vector<double> theta)
-    : AgentMinimaxSARSA(depth, 0.99, 0.01, theta) {}
+    : AgentMinimaxSARSA(depth, 0.99, theta) {}
 
 AgentMinimaxSARSA::AgentMinimaxSARSA(size_t firstDepth, float discount,
-                                     float threatWeight, vector<double> theta)
+                                     vector<double> theta)
     : firstDepth_{firstDepth},
       discount_{discount},
-      threatWeight_{threatWeight},
       theta{theta} {}
 
 void AgentMinimaxSARSA::getMove(

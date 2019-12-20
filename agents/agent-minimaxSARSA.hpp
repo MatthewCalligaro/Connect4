@@ -31,11 +31,10 @@ class AgentMinimaxSARSA : public Agent {
   /**
    * \brief Creates a minimax + Q or MC Agent with the learned depths
    * \param firstDepth  The first maximum depth used by the agent
-   * \param threatWeight  should be ignored
-   * \param discount   should be ignored
+   * \param discount  The discount factor
    * \param theta  The learned weights for the feature grid.
    */ 
-  AgentMinimaxSARSA(size_t firstDepth, float discount, float threatWeight,
+  AgentMinimaxSARSA(size_t firstDepth, float discount,
                     vector<double> theta);
   /**
    * \brief gets Agent's next move by extracting features and learning weights. 
@@ -45,9 +44,14 @@ class AgentMinimaxSARSA : public Agent {
   std::string getAgentName() const override;
 
  private:
+  /** 
+   * \brief Depth of minimax
+  */
   size_t firstDepth_;
+  /** 
+   * \brief Discount Factor
+  */
   float discount_;
-  float threatWeight_;
   /** 
    * \brief Learned weights for the features
   */

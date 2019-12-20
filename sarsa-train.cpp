@@ -1,4 +1,10 @@
-// Copyright 2019 Aditya Khant
+/**
+ * \file sarsa-train.cpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements the LSARSATrain class
+ */
+
 #include "sarsa-train.hpp"
 #include <time.h>
 #include <algorithm>
@@ -167,13 +173,3 @@ std::tuple<size_t, double> LSARSATrain::getEGreedyAction(Board board,
   }
 }
 
-size_t LSARSATrain::getPiece(int row, int col, vector<char> boardVec) {
-  char c = boardVec[row * 7 + col];
-  if (c == 'X') {
-    return 0;
-  } else if (c == 'O') {
-    return 1;
-  } else {
-    return 2;
-  }
-}

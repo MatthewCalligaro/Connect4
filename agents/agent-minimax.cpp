@@ -1,5 +1,5 @@
 /**
- * \file agent-minimax.hpp
+ * \file agent-minimax.cpp
  * \copyright Matthew Calligaro
  * \date December 2019
  * \brief Implements the AgentMinimax class

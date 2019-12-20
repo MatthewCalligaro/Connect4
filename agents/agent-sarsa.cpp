@@ -1,4 +1,10 @@
-// Copyright 2019 Aditya Khant
+/**
+ * \file agent-sarsa.cpp
+ * \copyright Matthew Calligaro
+ * \date December 2019
+ * \brief Implements the AgentSARSA class
+ */
+
 #include "agent-sarsa.hpp"
 #include <sstream>
 #include <string>
