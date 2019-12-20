@@ -21,7 +21,7 @@ void printUsage() {
             << std::endl
             << std::endl
             << "Options:" << std::endl 
-            << "-t: single, time, win, depth" << std::endl
+            << "-t: single, time, win, depth, Q, MC" << std::endl
             << "-n: positive integer number" << std::endl
             << "-d: positive integer number" << std::endl
             << "-v: verbose" << std::endl

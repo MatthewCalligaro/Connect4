@@ -117,11 +117,6 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
       q_prime = std::get<1>(actionTup);
     }
   }
-  std::ostringstream oss;
-  std::copy(theta.begin(), theta.end() - 1,
-            std::ostream_iterator<float>(oss, ","));
-  oss << theta.back();
-  std::cout << oss.str() << std::endl;
   return theta;
 }
 
