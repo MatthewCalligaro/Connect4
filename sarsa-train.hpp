@@ -70,6 +70,14 @@ class LSARSATrain {
    */ 
   std::tuple<size_t, double> getEGreedyAction(Board board, vector<double> theta,
                                               double epsilon, bool q);
+  /** 
+   * \brief Returns the reward for taking an action 
+   * \note Its +1 for winning, -1 for losing, 0 for draw, -0.02 per move
+   */ 
+  double reward(Board board);
+
+ private:
+  size_t getSubstringCount(std::string mainStr, std::string subStr);
 };
 
 #endif  // SARSA_TRAIN_HPP_
