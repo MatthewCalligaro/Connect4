@@ -16,16 +16,11 @@
 #include <tuple>
 #include <vector>
 
-using std::array;
-using std::cout;
-using std::endl;
-using std::vector;
-
 LSARSATrain::LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES)
     : NUM_EPISODES{NUM_EPISODES}, trainingFor{turn}, isQ{isQ} {};
 
 vector<size_t> LSARSATrain::extractFeatures(Board board) {
-  array<size_t, 2> threatCount = board.getThreatCount();
+  std::array<size_t, 2> threatCount = board.getThreatCount();
   size_t score = 0;
   if (board.getTurn()) {
     score = threatCount[0] * 3 + threatCount[1];
@@ -103,8 +98,6 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
     double q_prime = std::get<1>(actionTup);
 
     while (!(boardCopy.isDraw() || boardCopy.isWon())) {
-      // std::cout << "Game Ended Loop ?" << (!boardCopy.isDraw() &&
-      // !boardCopy.isWon()) <<std::endl;
       double q = getQValue(boardCopy, theta);
       boardCopy.handleMove(action);
 
@@ -122,10 +115,6 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
       q_prime = std::get<1>(actionTup);
     }
   }
-  for (size_t i = 0; i < VECTOR_SIZE; ++i) {
-    std::cout << theta[i] << ",";
-  }
-  std::cout << std::endl;
   return theta;
 }
 
