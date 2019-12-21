@@ -39,14 +39,15 @@ class Test {
    * \param verbose   Print extra information as the trials complete
    */
   static void winTrials(size_t numTrials, size_t depth, bool verbose = false);
-  
+
   /**
    * \brief Plays several games with agents that require training
    * \param numTrials The number of trials to play in each configuration
    * \param depth     The depth to use for minimax-based agents
    * \param verbose   Print extra information as the trials complete
    */
-  static void winTrialsWithTrain(size_t numTrials, size_t depth, bool verbose = false);
+  static void winTrialsWithTrain(size_t numTrials, size_t depth,
+                                 bool verbose = false);
 
   /**
    * \brief Play all pairwise games between minimax agents of a range of depths

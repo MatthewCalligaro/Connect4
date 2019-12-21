@@ -94,9 +94,8 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
   for (size_t i = 0; i < VECTOR_SIZE; ++i) {
     theta[i] = 0.1;
   }
-  
+
   for (size_t episode = 0; episode < NUM_EPISODES; ++episode) {
-  
     boardCopy = board;
     std::tuple<size_t, double> actionTup =
         getEGreedyAction(boardCopy, theta, EPSILON, true);
@@ -104,11 +103,12 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
     double q_prime = std::get<1>(actionTup);
 
     while (!(boardCopy.isDraw() || boardCopy.isWon())) {
-      // std::cout << "Game Ended Loop ?" << (!boardCopy.isDraw() && !boardCopy.isWon()) <<std::endl;
+      // std::cout << "Game Ended Loop ?" << (!boardCopy.isDraw() &&
+      // !boardCopy.isWon()) <<std::endl;
       double q = getQValue(boardCopy, theta);
       boardCopy.handleMove(action);
- 
-      double r =boardCopy.getReward();
+
+      double r = boardCopy.getReward();
       double delta = r + GAMMA * (q_prime)-q;
       vector<size_t> activeFeatures = extractFeatures(boardCopy);
       for (size_t i = 0; i < VECTOR_SIZE; ++i) {
@@ -122,7 +122,7 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
       q_prime = std::get<1>(actionTup);
     }
   }
-  for (size_t i = 0; i < VECTOR_SIZE; ++i){
+  for (size_t i = 0; i < VECTOR_SIZE; ++i) {
     std::cout << theta[i] << ",";
   }
   std::cout << std::endl;
@@ -134,7 +134,7 @@ std::tuple<size_t, double> LSARSATrain::getAction(Board board,
   vector<size_t> successors = board.getSuccessors();
   size_t max_move = successors[0];
   double max_val = -9999;
-  if (!board.getTurn()){
+  if (!board.getTurn()) {
     for (size_t i = 0; i < successors.size(); ++i) {
       Board sucBoard = board;
       sucBoard.handleMove(successors[i]);
@@ -156,9 +156,8 @@ std::tuple<size_t, double> LSARSATrain::getAction(Board board,
         max_move = successors[i];
       }
     }
-
   }
- 
+
   return std::make_tuple(max_move, max_val);
 }
 
@@ -191,4 +190,3 @@ std::tuple<size_t, double> LSARSATrain::getEGreedyAction(Board board,
     return getAction(board, theta);
   }
 }
-

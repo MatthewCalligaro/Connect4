@@ -17,13 +17,15 @@ void printUsage() {
             << "Copyright Matthew Calligaro, Aditya Khant December 2019"
             << std::endl
             << std::endl
-            << "Usage: ./c4 [-t <test type>] [-n <number of trials>] [-d <depth>] [-v] [-h]"
+            << "Usage: ./c4 [-t <test type>] [-n <number of trials>] [-d "
+               "<depth>] [-v] [-h]"
             << std::endl
             << std::endl
-            << "Options:" << std::endl 
+            << "Options:" << std::endl
             << "-t: test type (single, time, win, winTrain, depth)" << std::endl
             << "-n: number of trials (positive integer number)" << std::endl
-            << "-d: depth for minimax agents (positive integer number)" << std::endl
+            << "-d: depth for minimax agents (positive integer number)"
+            << std::endl
             << "-v: verbose" << std::endl
             << "-h: show this help message" << std::endl;
 }

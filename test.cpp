@@ -217,7 +217,8 @@ void Test::winTrialsWithTrain(size_t numTrials, size_t depth, bool verbose) {
   size_t xStats[3] = {0, 0, 0};
   for (size_t i = 0; i < numTrials; ++i) {
     // Set ax and ao to the agents you would like to test
-    std::shared_ptr<Agent> ax = std::make_shared<AgentMinimaxSARSA>(depth, theta);
+    std::shared_ptr<Agent> ax =
+        std::make_shared<AgentMinimaxSARSA>(depth, theta);
     std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(depth);
     Game game(ax, ao, TIME_LIMIT);
     size_t winner = game.execute();
@@ -242,7 +243,8 @@ void Test::winTrialsWithTrain(size_t numTrials, size_t depth, bool verbose) {
   size_t oStats[3] = {0, 0, 0};
   for (size_t i = 0; i < numTrials; ++i) {
     // Set ax and ao to the same agents from the previous section
-    std::shared_ptr<Agent> ao = std::make_shared<AgentMinimaxSARSA>(depth, theta);
+    std::shared_ptr<Agent> ao =
+        std::make_shared<AgentMinimaxSARSA>(depth, theta);
     std::shared_ptr<Agent> ax = std::make_shared<AgentMinimax>(depth);
 
     Game game(ax, ao, TIME_LIMIT);

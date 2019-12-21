@@ -16,9 +16,9 @@
 using std::vector;
 /**
  * \class LSARSATrain
- * \brief A class that trains the weights on features extracted 
+ * \brief A class that trains the weights on features extracted
  * from the board using Linear Q Learning
- */ 
+ */
 class LSARSATrain {
  public:
   /**
@@ -26,7 +26,7 @@ class LSARSATrain {
    * \param turn  Selects whether you are playing for player 0 or 1
    * \param isQ   True, if its Q Learning, false if its SARSA
    * \param NUM_EPISODES  number of episodes the training must go for
-   */    
+   */
   LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES);
   ~LSARSATrain() = default;
   /** \brief size of the feature vector */
@@ -34,11 +34,11 @@ class LSARSATrain {
   /** \brief default number of episodes to train on */
   size_t NUM_EPISODES = 10000;
   /**
-   * \brief Extracts features from the board and gets the Q value by summing over the value of active features. 
-   * \param board The current Board state
+   * \brief Extracts features from the board and gets the Q value by summing
+   * over the value of active features. \param board The current Board state
    * \param theta The weights of the learned features
    * \return Q value of the board state
-   */ 
+   */
   static double getQValue(Board board, vector<double> theta);
   /** \brief Extracts features from the current board state */
   static vector<size_t> extractFeatures(Board board);
@@ -52,28 +52,28 @@ class LSARSATrain {
   vector<double> sarsaTrain(Board board);
   /** \brief Performs training using Linear Q learning from an empty board */
   vector<double> sarsaTrain();
-  /** 
+  /**
    * \brief gets the greedy action at a given board state
    * \param board Current Board State
    * \param theta Learned weights for feature
    * \return a tuple containing the greedy action and its Q value
-   */ 
+   */
   static std::tuple<size_t, double> getAction(Board board,
                                               vector<double> theta);
-   /** 
+  /**
    * \brief gets the epsilon greedy action at a given board state
    * \param board Current Board State
    * \param theta Learned weights for feature
    * \param epsilon The probability of exploring instead of exploiting
    * \param q Flag to notify whether its Q or SARSA
    * \return a tuple containing the greedy action and its Q value
-   */ 
+   */
   std::tuple<size_t, double> getEGreedyAction(Board board, vector<double> theta,
                                               double epsilon, bool q);
-  /** 
-   * \brief Returns the reward for taking an action 
+  /**
+   * \brief Returns the reward for taking an action
    * \note Its +1 for winning, -1 for losing, 0 for draw, -0.02 per move
-   */ 
+   */
   double reward(Board board);
 
  private:

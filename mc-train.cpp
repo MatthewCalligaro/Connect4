@@ -43,10 +43,8 @@ vector<size_t> MonteCarloTrain::extractFeatures(Board board) {
     }
   }
 
-
   return output;
 }
-
 
 double MonteCarloTrain::reward(Board board) {
   if (board.isDraw()) {
@@ -58,13 +56,11 @@ double MonteCarloTrain::reward(Board board) {
       return 1;
     }
   } else {
-
     if (!board.getTurn()) {
-    return -0.02;
+      return -0.02;
     } else {
       return 0.02;
     }
-
   }
 }
 
@@ -103,19 +99,18 @@ vector<double> MonteCarloTrain::mcTrain(Board board) {
     counts[i] = 0;
   }
   for (size_t episode = 0; episode < NUM_EPISODES; ++episode) {
-    boardCopy = board; 
+    boardCopy = board;
     vector<std::tuple<vector<size_t>, double>> episodeVector =
         vector<std::tuple<vector<size_t>, double>>();
     while (!boardCopy.isDraw() && !boardCopy.isWon()) {
-        std::tuple<size_t, double> actionTup =
-            getEGreedyAction(boardCopy, theta, EPSILON, true);
-        size_t action = std::get<0>(actionTup);
-        boardCopy.handleMove(action);
-        double r = reward(boardCopy) ;
-        vector<size_t> activeFeatures = extractFeatures(boardCopy);
-        auto stepTup = std::make_tuple(activeFeatures, r);
-        episodeVector.push_back(stepTup);
-
+      std::tuple<size_t, double> actionTup =
+          getEGreedyAction(boardCopy, theta, EPSILON, true);
+      size_t action = std::get<0>(actionTup);
+      boardCopy.handleMove(action);
+      double r = reward(boardCopy);
+      vector<size_t> activeFeatures = extractFeatures(boardCopy);
+      auto stepTup = std::make_tuple(activeFeatures, r);
+      episodeVector.push_back(stepTup);
     }
     for (size_t i = 0; i < episodeVector.size(); ++i) {
       double r = 0;
@@ -124,7 +119,7 @@ vector<double> MonteCarloTrain::mcTrain(Board board) {
         double rTot = std::get<1>(epJ);
         r += pow(GAMMA, (j - i)) * rTot;
       }
-   
+
       std::tuple<vector<size_t>, double> epI = episodeVector[i];
       auto currState = std::get<0>(epI);
       for (size_t j = 0; j < VECTOR_SIZE; ++j) {
@@ -135,19 +130,16 @@ vector<double> MonteCarloTrain::mcTrain(Board board) {
       }
     }
   }
-    for (size_t i = 0; i < VECTOR_SIZE; ++i){
-    std::cout << theta[i] << ",";
-  }
-  std::cout << std::endl;
+
   return theta;
 }
 
 std::tuple<size_t, double> MonteCarloTrain::getAction(Board board,
-                                                  vector<double> theta) {
+                                                      vector<double> theta) {
   vector<size_t> successors = board.getSuccessors();
   size_t max_move = successors[0];
   double max_val = -9999;
-  if (board.getTurn()){
+  if (board.getTurn()) {
     for (size_t i = 0; i < successors.size(); ++i) {
       Board sucBoard = board;
       sucBoard.handleMove(successors[i]);
@@ -169,9 +161,8 @@ std::tuple<size_t, double> MonteCarloTrain::getAction(Board board,
         max_move = successors[i];
       }
     }
-
   }
- 
+
   return std::make_tuple(max_move, max_val);
 }
 
