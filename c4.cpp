@@ -14,7 +14,7 @@
  */
 void printUsage() {
   std::cout << "Connect4: A command line Connect 4 implementation" << std::endl
-            << "Copyright Matthew Calligaro, Adity Khant December 2019"
+            << "Copyright Matthew Calligaro, Aditya Khant December 2019"
             << std::endl
             << std::endl
             << "Usage: ./c4 [-t <test type>] [-n <number of trials>] [-d <depth>] [-v] [-h]"
