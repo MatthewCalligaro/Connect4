@@ -31,11 +31,7 @@ vector<size_t> LSARSATrain::extractFeatures(Board board) {
 
   vector<size_t> output = vector<size_t>(VECTOR_SIZE);
   for (size_t i = 0; i < 9; ++i) {
-    if (i == score) {
-      output[i] = 1;
-    } else {
-      output[i] = 0;
-    }
+    output[i] = i == score;
   }
   return output;
 }
@@ -57,7 +53,7 @@ vector<double> LSARSATrain::sarsaTrain() {
 vector<double> LSARSATrain::sarsaTrain(Board board) {
   vector<double> theta = vector<double>(VECTOR_SIZE);
   const float EPSILON = 0.1;
-  const float ALPHA = 0.3;
+  const float ALPHA = 0.001;
   const float GAMMA = 0.9;
   Board boardCopy = board;
   //
@@ -68,33 +64,41 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
   std::default_random_engine re;
   re.seed((unsigned)time(NULL));
   for (size_t i = 0; i < VECTOR_SIZE; ++i) {
-    theta[i] = 0.5;
+    theta[i] = 0.1;
   }
   
   for (size_t episode = 0; episode < NUM_EPISODES; ++episode) {
-    
+  
+    boardCopy = board;
     std::tuple<size_t, double> actionTup =
         getEGreedyAction(boardCopy, theta, EPSILON, true);
     size_t action = std::get<0>(actionTup);
     double q_prime = std::get<1>(actionTup);
-    while (!boardCopy.isDraw() && !boardCopy.isWon()) {
+
+    while (!(boardCopy.isDraw() || boardCopy.isWon())) {
+      // std::cout << "Game Ended Loop ?" << (!boardCopy.isDraw() && !boardCopy.isWon()) <<std::endl;
       double q = getQValue(boardCopy, theta);
       boardCopy.handleMove(action);
-      if (boardCopy.getTurn() == trainingFor) {
-        double r =boardCopy.getReward();
-        double delta = r + GAMMA * (q_prime)-q;
-        vector<size_t> activeFeatures = extractFeatures(boardCopy);
-        for (size_t i = 0; i < VECTOR_SIZE; ++i) {
-          if (activeFeatures[i] > 0) {
-            theta[i] += ALPHA * delta;
-          }
+      // if (boardCopy.getTurn() == trainingFor) {
+      double r =boardCopy.getReward();
+      double delta = r + GAMMA * (q_prime)-q;
+      // std::cout << delta << std::endl;
+      vector<size_t> activeFeatures = extractFeatures(boardCopy);
+      for (size_t i = 0; i < VECTOR_SIZE; ++i) {
+        if (activeFeatures[i] > 0) {
+          theta[i] += ALPHA * delta;
         }
       }
+      // }
       actionTup = getEGreedyAction(board, theta, EPSILON, true);
       action = std::get<0>(actionTup);
       q_prime = std::get<1>(actionTup);
     }
   }
+  for (size_t i = 0; i < VECTOR_SIZE; ++i){
+    std::cout << theta[i] << ",";
+  }
+  std::cout << std::endl;
   return theta;
 }
 
@@ -103,15 +107,31 @@ std::tuple<size_t, double> LSARSATrain::getAction(Board board,
   vector<size_t> successors = board.getSuccessors();
   size_t max_move = successors[0];
   double max_val = -9999;
-  for (size_t i = 0; i < successors.size(); ++i) {
-    Board sucBoard = board;
-    sucBoard.handleMove(successors[i]);
-    double q = getQValue(sucBoard, theta);
-    if (q > max_val) {
-      max_val = q;
-      max_move = successors[i];
+  if (!board.getTurn()){
+    for (size_t i = 0; i < successors.size(); ++i) {
+      Board sucBoard = board;
+      sucBoard.handleMove(successors[i]);
+      double q = getQValue(sucBoard, theta);
+      if (q > max_val) {
+        max_val = q;
+        max_move = successors[i];
+      }
     }
+  } else {
+    max_move = successors[0];
+    max_val = 9999;
+    for (size_t i = 0; i < successors.size(); ++i) {
+      Board sucBoard = board;
+      sucBoard.handleMove(successors[i]);
+      double q = getQValue(sucBoard, theta);
+      if (q < max_val) {
+        max_val = q;
+        max_move = successors[i];
+      }
+    }
+
   }
+ 
   return std::make_tuple(max_move, max_val);
 }
 

@@ -207,8 +207,8 @@ void Test::winTrials(size_t numTrials, bool verbose) {
 
 void Test::winTrialsQ(size_t numTrials, bool verbose, size_t depth) {
   const size_t TIME_LIMIT = 2000;
-  LSARSATrain LSARSA_0 = LSARSATrain(0, true, 100000);
-  LSARSATrain LSARSA_1 = LSARSATrain(1, true, 100000);
+  LSARSATrain LSARSA_0 = LSARSATrain(0, true, 10000);
+  LSARSATrain LSARSA_1 = LSARSATrain(1, true, 10000);
 
   size_t xStats[3] = {0, 0, 0};
   for (size_t i = 0; i < numTrials; ++i) {
@@ -272,15 +272,14 @@ void Test::winTrialsQ(size_t numTrials, bool verbose, size_t depth) {
 
 void Test::winTrialsMC(size_t numTrials, bool verbose, size_t depth) {
   const size_t TIME_LIMIT = 2000;
-  MonteCarloTrain MC_0 = MonteCarloTrain(0, 100000);
-  MonteCarloTrain MC_1 = MonteCarloTrain(1, 100000);
+  MonteCarloTrain MC_0 = MonteCarloTrain(0, 10000);
+  MonteCarloTrain MC_1 = MonteCarloTrain(1, 10000);
 
   size_t xStats[3] = {0, 0, 0};
   for (size_t i = 0; i < numTrials; ++i) {
     vector<double> theta_0 = MC_0.mcTrain();
     std::shared_ptr<Agent> ax = std::make_shared<AgentMinimaxSARSA>(depth, theta_0);
     std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(depth);
-
     Game game(ax, ao, TIME_LIMIT);
     size_t winner = game.execute();
     ++xStats[winner];
@@ -326,7 +325,6 @@ void Test::winTrialsMC(size_t numTrials, bool verbose, size_t depth) {
       }
     }
   }
-
   std::cout << "X wins: " << xStats[0] << std::endl;
   std::cout << "X loses: " << xStats[1] << std::endl;
   std::cout << "X draws: " << xStats[2] << std::endl;
