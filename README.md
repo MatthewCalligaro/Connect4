@@ -8,10 +8,11 @@ To generate complete documentation for this project, run `make doxygen` from the
 To compile the command line executable, run `make` from the root directory of this project.  You can then execute the program with `./c4`.
 
 ## Usage
-`Usage: ./c4 [-t <test type>] [-n <number of trials>] [-v] [-h]`
+`Usage: ./c4 [-t <test type>] [-n <number of trials>] [-d <depth>] [-v] [-h]`
 
 ### Options
-* `-t`: single, time, win, depth
-* `-n`: positive integer number
+* `-t`: test type (single, time, win, winTrain, depth)
+* `-n`: number of trials (positive integer number)
+* `-d`: depth for minimax agents (positive integer number)
 * `-v`: verbose
 * `-h`: show this help message
