@@ -1,10 +1,10 @@
-// Copyright 2019 Aditya Khant
 /**
  * \file mc-train.hpp
  * \copyright Aditya Khant
  * \date December 2019
  * \brief Declares the Linear MC Training class
  */
+
 #ifndef MC_TRAIN_HPP_
 #define MC_TRAIN_HPP_
 
