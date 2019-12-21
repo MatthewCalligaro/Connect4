@@ -1,6 +1,6 @@
 /**
  * \file c4.cpp
- * \copyright Matthew Calligaro
+ * \copyright Matthew Calligaro, Aditya Khant
  * \date December 2019
  * \brief The entry point for the command line application
  */
@@ -21,9 +21,9 @@ void printUsage() {
             << std::endl
             << std::endl
             << "Options:" << std::endl 
-            << "-t: single, time, win, depth, Q, MC" << std::endl
-            << "-n: positive integer number" << std::endl
-            << "-d: positive integer number" << std::endl
+            << "-t: test type (single, time, win, winTrain, depth)" << std::endl
+            << "-n: number of trials (positive integer number)" << std::endl
+            << "-d: depth for minimax agents (positive integer number)" << std::endl
             << "-v: verbose" << std::endl
             << "-h: show this help message" << std::endl;
 }
@@ -73,11 +73,9 @@ int main(int argc, char **argv) {
   } else if (testType == "time") {
     Test::timeTrials(numTrials, 1, 12, "newtag", verbose);
   } else if (testType == "win") {
-    Test::winTrials(numTrials, verbose);
-  } else if (testType == "Q") {
-    Test::winTrialsQ(numTrials, verbose, depth);
-  } else if (testType == "MC") {
-    Test::winTrialsMC(numTrials, verbose, depth);
+    Test::winTrials(numTrials, depth, verbose);
+  } else if (testType == "winTrain") {
+    Test::winTrialsWithTrain(numTrials, depth, verbose);
   } else if (testType == "depth") {
     Test::pairwiseDepthTrials(1, 12);
   } else {

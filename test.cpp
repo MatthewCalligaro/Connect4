@@ -1,6 +1,6 @@
 /**
  * \file test.cpp
- * \copyright Matthew Calligaro
+ * \copyright Matthew Calligaro, Aditya Khant
  * \date December 2019
  * \brief Implements the Test class
  */
@@ -144,76 +144,13 @@ void Test::timeTrials(size_t numTrials, size_t minDepth, size_t maxDepth,
   }
 }
 
-void Test::winTrials(size_t numTrials, bool verbose) {
+void Test::winTrials(size_t numTrials, size_t depth, bool verbose) {
   const size_t TIME_LIMIT = 2000;
 
   size_t xStats[3] = {0, 0, 0};
   for (size_t i = 0; i < numTrials; ++i) {
+    // Set ax and ao to the agents you would like to test
     std::shared_ptr<Agent> ax = std::make_shared<AgentMCTS>();
-    std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(12);
-
-    Game game(ax, ao, TIME_LIMIT);
-    size_t winner = game.execute();
-    ++xStats[winner];
-
-    if (verbose) {
-      std::cout << "Trial " << i + 1 << ": ";
-      switch (winner) {
-        case 0:
-          std::cout << ax->getAgentName() << " (X Player) won" << std::endl;
-          break;
-        case 1:
-          std::cout << ao->getAgentName() << " (O Player) won" << std::endl;
-          break;
-        case 2:
-          std::cout << "Draw" << std::endl;
-          break;
-      }
-    }
-  }
-
-  size_t oStats[3] = {0, 0, 0};
-  for (size_t i = 0; i < numTrials; ++i) {
-    std::shared_ptr<Agent> ao = std::make_shared<AgentMCTS>();
-    std::shared_ptr<Agent> ax = std::make_shared<AgentMinimax>(12);
-
-    Game game(ax, ao, TIME_LIMIT);
-    size_t winner = game.execute();
-    ++oStats[winner];
-
-    if (verbose) {
-      std::cout << "Trial " << i + 1 << ": ";
-      switch (winner) {
-        case 0:
-          std::cout << ax->getAgentName() << " (X Player) won" << std::endl;
-          break;
-        case 1:
-          std::cout << ao->getAgentName() << " (O Player) won" << std::endl;
-          break;
-        case 2:
-          std::cout << "Draw" << std::endl;
-          break;
-      }
-    }
-  }
-
-  std::cout << "X wins: " << xStats[0] << std::endl;
-  std::cout << "X loses: " << xStats[1] << std::endl;
-  std::cout << "X draws: " << xStats[2] << std::endl;
-  std::cout << "O wins: " << oStats[1] << std::endl;
-  std::cout << "O loses: " << oStats[0] << std::endl;
-  std::cout << "O draws: " << oStats[2] << std::endl;
-}
-
-void Test::winTrialsQ(size_t numTrials, bool verbose, size_t depth) {
-  const size_t TIME_LIMIT = 2000;
-  LSARSATrain LSARSA_0 = LSARSATrain(0, true, 100000);
-  LSARSATrain LSARSA_1 = LSARSATrain(1, true, 100000);
-
-  size_t xStats[3] = {0, 0, 0};
-  for (size_t i = 0; i < numTrials; ++i) {
-    vector<double> theta_0 = LSARSA_0.sarsaTrain();
-    std::shared_ptr<Agent> ax = std::make_shared<AgentMinimaxSARSA>(depth, theta_0);
     std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(depth);
 
     Game game(ax, ao, TIME_LIMIT);
@@ -238,8 +175,8 @@ void Test::winTrialsQ(size_t numTrials, bool verbose, size_t depth) {
 
   size_t oStats[3] = {0, 0, 0};
   for (size_t i = 0; i < numTrials; ++i) {
-     vector<double> theta_1 = LSARSA_1.sarsaTrain();
-    std::shared_ptr<Agent> ao = std::make_shared<AgentMinimaxSARSA>(depth, theta_1);
+    // Set ax and ao to the same agents from the previous section
+    std::shared_ptr<Agent> ao = std::make_shared<AgentMCTS>();
     std::shared_ptr<Agent> ax = std::make_shared<AgentMinimax>(depth);
 
     Game game(ax, ao, TIME_LIMIT);
@@ -270,15 +207,17 @@ void Test::winTrialsQ(size_t numTrials, bool verbose, size_t depth) {
   std::cout << "O draws: " << oStats[2] << std::endl;
 }
 
-void Test::winTrialsMC(size_t numTrials, bool verbose, size_t depth) {
+void Test::winTrialsWithTrain(size_t numTrials, size_t depth, bool verbose) {
   const size_t TIME_LIMIT = 2000;
-  MonteCarloTrain MC_0 = MonteCarloTrain(0, 100000);
-  MonteCarloTrain MC_1 = MonteCarloTrain(1, 100000);
+
+  // Train using the desired training method
+  LSARSATrain LSARSA = LSARSATrain(0, true, 10000);
+  vector<double> theta = LSARSA.sarsaTrain();
 
   size_t xStats[3] = {0, 0, 0};
   for (size_t i = 0; i < numTrials; ++i) {
-    vector<double> theta_0 = MC_0.mcTrain();
-    std::shared_ptr<Agent> ax = std::make_shared<AgentMinimaxSARSA>(depth, theta_0);
+    // Set ax and ao to the agents you would like to test
+    std::shared_ptr<Agent> ax = std::make_shared<AgentMinimaxSARSA>(depth, theta);
     std::shared_ptr<Agent> ao = std::make_shared<AgentMinimax>(depth);
 
     Game game(ax, ao, TIME_LIMIT);
@@ -303,8 +242,8 @@ void Test::winTrialsMC(size_t numTrials, bool verbose, size_t depth) {
 
   size_t oStats[3] = {0, 0, 0};
   for (size_t i = 0; i < numTrials; ++i) {
-     vector<double> theta_1 = MC_1.mcTrain();
-    std::shared_ptr<Agent> ao = std::make_shared<AgentMinimaxSARSA>(depth, theta_1);
+    // Set ax and ao to the same agents from the previous section
+    std::shared_ptr<Agent> ao = std::make_shared<AgentMinimaxSARSA>(depth, theta);
     std::shared_ptr<Agent> ax = std::make_shared<AgentMinimax>(depth);
 
     Game game(ax, ao, TIME_LIMIT);
