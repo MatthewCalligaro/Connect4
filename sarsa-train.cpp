@@ -1,6 +1,6 @@
 /**
  * \file sarsa-train.cpp
- * \copyright Matthew Calligaro
+ * \copyright Aditya Khant
  * \date December 2019
  * \brief Implements the LSARSATrain class
  */
@@ -27,13 +27,41 @@ LSARSATrain::LSARSATrain(size_t turn, bool isQ, size_t NUM_EPISODES)
 vector<size_t> LSARSATrain::extractFeatures(Board board) {
   array<size_t, 2> threatCount = board.getThreatCount();
   size_t score = 0;
-  score = threatCount[0] * 3 + threatCount[1];
+  if (board.getTurn()) {
+    score = threatCount[0] * 3 + threatCount[1];
+  } else {
+    score = threatCount[1] * 3 + threatCount[0];
+  }
 
   vector<size_t> output = vector<size_t>(VECTOR_SIZE);
   for (size_t i = 0; i < 9; ++i) {
     output[i] = i == score;
   }
   return output;
+}
+
+size_t LSARSATrain::getSubstringCount(std::string mainStr, std::string subStr) {
+  size_t occurrences = 0;
+  std::string::size_type pos = 0;
+  while ((pos = mainStr.find(subStr, pos)) != std::string::npos) {
+    ++occurrences;
+    ++pos;
+  }
+  return occurrences;
+}
+
+double LSARSATrain::reward(Board board) {
+  if (board.isDraw()) {
+    return 0;
+  } else if (board.isWon()) {
+    if (board.getTurn() == trainingFor) {
+      return -1;
+    } else {
+      return 1;
+    }
+  } else {
+    return -0.02;
+  }
 }
 
 double LSARSATrain::getQValue(Board board, vector<double> theta) {
@@ -79,10 +107,9 @@ vector<double> LSARSATrain::sarsaTrain(Board board) {
       // std::cout << "Game Ended Loop ?" << (!boardCopy.isDraw() && !boardCopy.isWon()) <<std::endl;
       double q = getQValue(boardCopy, theta);
       boardCopy.handleMove(action);
-      // if (boardCopy.getTurn() == trainingFor) {
+ 
       double r =boardCopy.getReward();
       double delta = r + GAMMA * (q_prime)-q;
-      // std::cout << delta << std::endl;
       vector<size_t> activeFeatures = extractFeatures(boardCopy);
       for (size_t i = 0; i < VECTOR_SIZE; ++i) {
         if (activeFeatures[i] > 0) {

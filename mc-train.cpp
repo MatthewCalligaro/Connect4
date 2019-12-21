@@ -28,16 +28,25 @@ MonteCarloTrain::MonteCarloTrain(size_t turn, size_t NUM_EPISODES)
 vector<size_t> MonteCarloTrain::extractFeatures(Board board) {
   array<size_t, 2> threatCount = board.getThreatCount();
   size_t score = 0;
-  score = threatCount[0] * 3 + threatCount[1];
+  if (board.getTurn()) {
+    score = threatCount[0] * 3 + threatCount[1];
+  } else {
+    score = threatCount[1] * 3 + threatCount[0];
+  }
 
   vector<size_t> output = vector<size_t>(VECTOR_SIZE);
   for (size_t i = 0; i < 9; ++i) {
-    output[i] = i==score;
+    if (i == score) {
+      output[i] = 1;
+    } else {
+      output[i] = 0;
+    }
   }
 
 
   return output;
 }
+
 
 double MonteCarloTrain::reward(Board board) {
   if (board.isDraw()) {
@@ -49,11 +58,13 @@ double MonteCarloTrain::reward(Board board) {
       return 1;
     }
   } else {
+
     if (!board.getTurn()) {
     return -0.02;
     } else {
       return 0.02;
     }
+
   }
 }
 
@@ -74,8 +85,10 @@ vector<double> MonteCarloTrain::mcTrain() {
 vector<double> MonteCarloTrain::mcTrain(Board board) {
   vector<double> theta = vector<double>(VECTOR_SIZE);
   vector<size_t> counts = vector<size_t>(VECTOR_SIZE);
+
   const float EPSILON = 0.3;
   const float ALPHA = 0.0005;
+
   const float GAMMA = 0.9;
   Board boardCopy = board;
   //
