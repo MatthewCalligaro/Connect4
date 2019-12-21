@@ -1,5 +1,7 @@
 # Connect4
-An efficient implementation of Connect 4 with several agents
+An efficient implementation of Connect 4 with several agents.
+
+Repository link: https://github.com/MatthewCalligaro/Connect4
 
 ## Documentation
 To generate complete documentation for this project, run `make doxygen` from the root directory of this project.  If this fails, you may first need to install doxygen with `apt-get`.  You can then find the project's documentation in `documentation/html/index.html`.
