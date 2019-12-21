@@ -48,6 +48,7 @@ class MonteCarloTrain {
   std::vector<double> mcTrain(Board board);
   /** \brief Performs training using Linear Q learning from an empty board */
   std::vector<double> mcTrain();
+  double reward(Board board);
   /** 
    * \brief gets the greedy action at a given board state
    * \param board Current Board State
